@@ -1,0 +1,110 @@
+{
+    "common": {
+        "name": "mediola-gateway",
+        "version": "0.0.1",
+        "news": {
+            "0.0.1": {
+                "en": "initial release",
+                "de": "Erstveröffentlichung",
+                "ru": "Начальная версия",
+                "pt": "lançamento inicial",
+                "nl": "Eerste uitgave",
+                "fr": "Première version",
+                "it": "Versione iniziale",
+                "es": "Versión inicial",
+                "pl": "Pierwsze wydanie",
+                "zh-cn": "首次出版",
+                "uk": "початковий випуск"
+            }
+        },
+        "title": "mediola GW",
+        "titleLang": {
+            "en": "mediola GW",
+            "de": "mediola GW",
+            "ru": "Медиола GW",
+            "pt": "mediola GW",
+            "nl": "mediola GW",
+            "fr": "médiole GW",
+            "it": "mediola GW",
+            "es": "mediola gw",
+            "pl": "mediala GW",
+            "zh-cn": "梅迪奥拉 GW",
+            "uk": "mediola GW"
+        },
+        "desc": {
+            "en": "Konfiguration und Verwendung des Mediola-Gateways",
+            "de": "Konfiguration und Verwendung des Mediola-Gateways",
+            "ru": "Конфигурация и проверка шлюзов Mediola",
+            "pt": "Konfiguration und Verwendung des Mediola-Gateways",
+            "nl": "Configuratie en gebruik van Mediola-Gateways",
+            "fr": "Configuration et Verwendung des Mediola-Gateways",
+            "it": "Configurazione e verifica dei gateway Mediola",
+            "es": "Konfiguration und Verwendung des Mediola-Gateways",
+            "pl": "Konfiguration und Verwendung des Mediola-Gateways",
+            "zh-cn": "Mediola-Gateways 的配置和配置",
+            "uk": "Configuration und Verwendung des Mediola-Gateways"
+        },
+        "authors": [
+            "oelison <iobrokermediola@sciphy.de>"
+        ],
+        "keywords": [
+            "media",
+            "gateway",
+            "mediola"
+        ],
+        "license": "MIT",
+        "platform": "Javascript/Node.js",
+        "main": "build/main.js",
+        "icon": "mediola-gateway.png",
+        "enabled": true,
+        "extIcon": "https://raw.githubusercontent.com/oelison/ioBroker.mediola-gateway/main/admin/mediola-gateway.png",
+        "readme": "https://github.com/oelison/ioBroker.mediola-gateway/blob/main/README.md",
+        "loglevel": "info",
+        "mode": "daemon",
+        "type": "multimedia",
+        "compact": true,
+        "connectionType": "local",
+        "dataSource": "push",
+        "materialize": true,
+        "adminUI": {
+            "config": "json"
+        },
+        "eraseOnUpload": true,
+        "dependencies": [
+            {
+                "js-controller": ">=2.0.0"
+            }
+        ]
+    },
+    "native": {
+        "autoDetect": true,
+        "findByMAC": false,
+        "mac": "00:00:00:00:00:00",
+        "findByIp": false,
+        "ip": "192.168.0.1"
+    },
+    "objects": [],
+    "instanceObjects": [
+        {
+            "_id": "info",
+            "type": "channel",
+            "common": {
+                "name": "Information"
+            },
+            "native": {}
+        },
+        {
+            "_id": "info.connection",
+            "type": "state",
+            "common": {
+                "role": "indicator.connected",
+                "name": "Device or service connected",
+                "type": "boolean",
+                "read": true,
+                "write": false,
+                "def": false
+            },
+            "native": {}
+        }
+    ]
+}

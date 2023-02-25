@@ -1,0 +1,14 @@
+{
+    "mediola-gateway adapter settings": "Adapter settings for mediola-gateway",
+    "settings": "Settings",
+    "autoDetect": "Autodetect",
+    "helpAutoDetect": "if you have only one device it try to find it",
+    "findByMac": "Find by MAC address",
+    "helpFindByMac": "if you have more than one the mac address is not changing",
+    "mac": "MAC address",
+    "helpMac": "e.g. 11:22:33:44:55:66",
+    "findByIp": "Find by IP address",
+    "helpFindByIp": "if the ip is not changing",
+    "ip": "IP address",
+    "helpIp": "e.g. 123.234.12.45"
+}

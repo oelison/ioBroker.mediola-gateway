@@ -1,0 +1,14 @@
+{
+    "mediola-gateway adapter settings": "Configurações do adaptador para mediola-gateway",
+    "settings": "Configurações",
+    "autoDetect": "Detecção automática",
+    "findByMac": "Localizar por endereço MAC",
+    "mac": "Endereço MAC",
+    "findByIp": "Localizar por endereço IP",
+    "ip": "endereço de IP",
+    "helpAutoDetect": "se você tiver apenas um dispositivo, tente encontrá-lo",
+    "helpFindByMac": "se você tiver mais de um, o endereço mac não está mudando",
+    "helpMac": "por exemplo. 11:22:33:44:55:66",
+    "helpFindByIp": "se o ip não está mudando",
+    "helpIp": "por exemplo. 123.234.12.45"
+}

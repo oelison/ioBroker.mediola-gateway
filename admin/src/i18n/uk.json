@@ -1,0 +1,14 @@
+{
+    "mediola-gateway adapter settings": "Налаштування адаптера для mediola-gateway",
+    "settings": "Налаштування",
+    "autoDetect": "Автовизначення",
+    "findByMac": "Пошук за MAC-адресою",
+    "mac": "MAC-адреса",
+    "findByIp": "Пошук за IP-адресою",
+    "ip": "IP-адреса",
+    "helpAutoDetect": "якщо у вас лише один пристрій, спробуйте його знайти",
+    "helpFindByMac": "якщо у вас більше одного, mac-адреса не змінюється",
+    "helpMac": "напр. 11:22:33:44:55:66",
+    "helpFindByIp": "якщо ip не змінюється",
+    "helpIp": "напр. 123.234.12.45"
+}
