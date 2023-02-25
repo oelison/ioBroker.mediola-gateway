@@ -1,16 +1,54 @@
 {
     "i18n": true,
-    "type": "panel",
+    "type": "tabs",
     "items": {
-        "option1": {
-            "type": "checkbox",
-            "label": "option1",
-            "newLine": true
-        },
-        "option2": {
-            "type": "text",
-            "label": "option2",
-            "newLine": true
+        "_options": {
+            "type": "panel",
+            "label": "settings",
+            "items": {
+                "autoDetect": {
+                    "type": "checkbox",
+                    "sm": 12,
+                    "md": 6,
+                    "lg": 6,
+                    "label": "autoDetect",
+                    "help": "helpAutoDetect"
+                },
+                "findByMac": {
+                    "newLine": true,
+                    "type": "checkbox",
+                    "sm": 12,
+                    "md": 6,
+                    "lg": 6,
+                    "label": "findByMac",
+                    "help": "helpFindByMac"
+                },
+                "mac": {
+                    "type": "text",
+                    "sm": 12,
+                    "md": 6,
+                    "lg": 6,
+                    "label": "mac",
+                    "help": "helpMac"
+                },
+                "findByIp": {
+                    "newLine": true,
+                    "type": "checkbox",
+                    "sm": 12,
+                    "md": 6,
+                    "lg": 6,
+                    "label": "findByIp",
+                    "help": "helpFindByIp"
+                },
+                "ip": {
+                    "type": "text",
+                    "sm": 12,
+                    "md": 6,
+                    "lg": 6,
+                    "label": "ip",
+                    "help": "helpIp"
+                }
+            }
         }
     }
 }

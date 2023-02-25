@@ -33,8 +33,20 @@ class MediolaGateway extends utils.Adapter {
 
         // The adapters config (in the instance object everything under the attribute "native") is accessible via
         // this.config:
-        this.log.info("config option1: " + this.config.option1);
-        this.log.info("config option2: " + this.config.option2);
+        this.log.info("auto detection: " + this.config.autoDetect);
+        if (this.config.autoDetect == false) {
+            this.log.info("find by mac: " + this.config.findByMac);
+            if (this.config.findByMac == true) {
+                this.log.info("with mac address: " + this.config.mac);
+            } else {
+                this.log.info("find by ip: " + this.config.findByIp);
+                if (this.config.findByIp == true) {
+                    this.log.info("with ip: " + this.config.ip);
+                } else {
+                    this.log.error("no valid detection method defined");
+                }
+            }
+        }
 
         /*
 		For every state in the system there has to be also an object of type state

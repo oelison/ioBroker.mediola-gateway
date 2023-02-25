@@ -1,5 +1,14 @@
 {
     "mediola-gateway adapter settings": "mediola-gateway的适配器设置",
-    "option1": "选项1",
-    "option2": "选项2"
+    "settings": "设置",
+    "autoDetect": "自动侦测",
+    "helpAutoDetect": "如果您只有一台设备，它会尝试找到它",
+    "findByMac": "按MAC地址查找",
+    "helpFindByMac": "如果你有多个 mac 地址不会改变",
+    "mac": "MAC地址",
+    "helpMac": "例如11:22:33:44:55:66",
+    "findByIp": "按 IP 地址查找",
+    "helpFindByIp": "如果 ip 没有改变",
+    "ip": "IP地址",
+    "helpIp": "例如123.234.12.45"
 }

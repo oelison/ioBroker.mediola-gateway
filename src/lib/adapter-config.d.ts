@@ -4,8 +4,11 @@
 declare global {
     namespace ioBroker {
         interface AdapterConfig {
-            option1: boolean;
-            option2: string;
+            autoDetect: boolean;
+            findByMac: boolean;
+            mac: string;
+            findByIp: boolean;
+            ip: string;
         }
     }
 }

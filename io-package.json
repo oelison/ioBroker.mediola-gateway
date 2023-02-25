@@ -13,7 +13,8 @@
                 "it": "Versione iniziale",
                 "es": "Versión inicial",
                 "pl": "Pierwsze wydanie",
-                "zh-cn": "首次出版"
+                "zh-cn": "首次出版",
+                "uk": "початковий випуск"
             }
         },
         "title": "mediola GW",
@@ -27,7 +28,8 @@
             "it": "mediola GW",
             "es": "mediola gw",
             "pl": "mediala GW",
-            "zh-cn": "梅迪奥拉 GW"
+            "zh-cn": "梅迪奥拉 GW",
+            "uk": "mediola GW"
         },
         "desc": {
             "en": "Konfiguration und Verwendung des Mediola-Gateways",
@@ -39,7 +41,8 @@
             "it": "Configurazione e verifica dei gateway Mediola",
             "es": "Konfiguration und Verwendung des Mediola-Gateways",
             "pl": "Konfiguration und Verwendung des Mediola-Gateways",
-            "zh-cn": "Mediola-Gateways 的配置和配置"
+            "zh-cn": "Mediola-Gateways 的配置和配置",
+            "uk": "Configuration und Verwendung des Mediola-Gateways"
         },
         "authors": ["oelison <iobrokermediola@sciphy.de>"],
         "keywords": ["media", "gateway", "mediola"],
@@ -71,8 +74,11 @@
         ]
     },
     "native": {
-        "option1": true,
-        "option2": "42"
+        "autoDetect": true,
+        "findByMAC": false,
+        "mac": "00:00:00:00:00:00",
+        "findByIp": false,
+        "ip": "192.168.0.1"
     },
     "objects": [],
     "instanceObjects": [
