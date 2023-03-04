@@ -73,12 +73,15 @@
             }
         ]
     },
+    "encryptedNative": ["password"],
+    "protectedNative": ["password"],
     "native": {
         "autoDetect": true,
         "findByMAC": false,
         "mac": "00:00:00:00:00:00",
         "findByIp": false,
-        "ip": "192.168.0.1"
+        "ip": "192.168.0.1",
+        "password": ""
     },
     "objects": [],
     "instanceObjects": [

@@ -10,5 +10,7 @@
     "findByIp": "Localizar por endereço IP",
     "helpFindByIp": "se o ip não está mudando",
     "ip": "endereço de IP",
-    "helpIp": "por exemplo. 123.234.12.45"
+    "helpIp": "por exemplo. 123.234.12.45",
+    "password": "Senha",
+    "helpPassword": "Senha de acesso Mediola"
 }

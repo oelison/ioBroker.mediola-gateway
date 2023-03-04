@@ -10,5 +10,7 @@
     "findByIp": "Пошук за IP-адресою",
     "helpFindByIp": "якщо ip не змінюється",
     "ip": "IP-адреса",
-    "helpIp": "напр. 123.234.12.45"
+    "helpIp": "напр. 123.234.12.45",
+    "password": "Пароль",
+    "helpPassword": "Пароль для входу в Mediola"
 }

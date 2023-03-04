@@ -10,5 +10,7 @@
     "findByIp": "Zoek op IP-adres",
     "helpFindByIp": "als het ip niet verandert",
     "ip": "IP adres",
-    "helpIp": "bijv. 123.234.12.45"
+    "helpIp": "bijv. 123.234.12.45",
+    "password": "Wachtwoord",
+    "helpPassword": "Mediola-inlogwachtwoord"
 }

@@ -9,6 +9,7 @@ declare global {
             mac: string;
             findByIp: boolean;
             ip: string;
+            password: string;
         }
     }
 }

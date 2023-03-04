@@ -10,5 +10,7 @@
     "findByIp": "Znajdź według adresu IP",
     "helpFindByIp": "jeśli ip się nie zmienia",
     "ip": "adres IP",
-    "helpIp": "np. 123.234.12.45"
+    "helpIp": "np. 123.234.12.45",
+    "password": "Hasło",
+    "helpPassword": "Hasło logowania Medioli"
 }

@@ -10,5 +10,7 @@
     "findByIp": "Buscar por dirección IP",
     "helpFindByIp": "si la ip no cambia",
     "ip": "dirección IP",
-    "helpIp": "p.ej. 123.234.12.45"
+    "helpIp": "p.ej. 123.234.12.45",
+    "password": "Contraseña",
+    "helpPassword": "Contraseña de inicio de sesión de Mediola"
 }

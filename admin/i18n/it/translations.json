@@ -10,5 +10,7 @@
     "findByIp": "Trova per indirizzo IP",
     "helpFindByIp": "se l'ip non cambia",
     "ip": "indirizzo IP",
-    "helpIp": "per esempio. 123.234.12.45"
+    "helpIp": "per esempio. 123.234.12.45",
+    "password": "Parola d'ordine",
+    "helpPassword": "Password di accesso a Mediola"
 }

@@ -10,5 +10,7 @@
     "findByIp": "Nach IP-Adresse suchen",
     "helpFindByIp": "wenn sich die ip nicht ändert",
     "ip": "IP Adresse",
-    "helpIp": "z.B. 123.234.12.45"
+    "helpIp": "z.B. 123.234.12.45",
+    "password": "Passwort",
+    "helpPassword": "Mediola-Login-Passwort"
 }

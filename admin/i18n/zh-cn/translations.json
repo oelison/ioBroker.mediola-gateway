@@ -10,5 +10,7 @@
     "findByIp": "按 IP 地址查找",
     "helpFindByIp": "如果 ip 没有改变",
     "ip": "IP地址",
-    "helpIp": "例如123.234.12.45"
+    "helpIp": "例如123.234.12.45",
+    "password": "密码",
+    "helpPassword": "Mediola登录密码"
 }
