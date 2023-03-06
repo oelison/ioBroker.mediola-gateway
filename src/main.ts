@@ -2,8 +2,6 @@
  * Created with @iobroker/create-adapter v2.3.0
  */
 
-// The adapter-core module gives you access to the core ioBroker functions
-// you need to create an adapter
 import * as utils from "@iobroker/adapter-core";
 import axios from "axios";
 import * as dgram from "dgram";
@@ -15,6 +13,11 @@ let waitingForIpDevice = false;
 let foundMacAddress = "";
 let foundIpAddress = "";
 let validMediolaFound = false;
+
+// links of interest:
+// https://github.com/ioBroker/AdapterRequests/issues/47 (main adapter request)
+// https://github.com/ioBroker/AdapterRequests/issues/492 (868MHz request)
+// https://github.com/ioBroker/AdapterRequests/issues/60
 
 type MediolaEvt = { type: string; data: string };
 function isMediolaEvt(o: any): o is MediolaEvt {
