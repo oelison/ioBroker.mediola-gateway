@@ -94,6 +94,24 @@ class MediolaGateway extends utils.Adapter {
                 });
         }
     }
+    // set calls
+    // http://ipaddress/command?XC_FNC=setVar&id=01&type=ONOFF&value=off
+    // http://ipaddress/command?XC_FNC=setVar&id=01&type=ONOFF&value=on
+    // http://ipaddress/command?XC_FNC=setVar&id=02&type=int&value=00000007
+    // http://ipaddress/command?XC_FNC=setVar&id=03&type=float&value=31323334
+    // http://ipaddress/command?XC_FNC=setVar&id=04&type=string&value=abcdefghij
+    // events
+    // {XC_EVT}{"type":"SV","data":"B:01:off"}
+    // {XC_EVT}{"type":"SV","data":"B:01:on"}
+    // {XC_EVT}{"type":"SV","data":"I:02:00000007"}
+    // {XC_EVT}{"type":"SV","data":"F:03:432"}
+    // {XC_EVT}{"type":"SV","data":"S:04:abcdefghij"}
+    // getstates
+    // {XC_SUC}[
+    //    {"type":"ONOFF","adr":"01","state":"on"},
+    //    {"type":"INT","adr":"02","state":"00000007"},
+    //    {"type":"FLOAT","adr":"03","state":"31323334"},
+    //    {"type":"STRING","adr":"04","state":"abcdefghij"}]
     /**
      * Is called when databases are connected and adapter received configuration.
      */
