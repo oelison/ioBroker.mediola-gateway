@@ -13,6 +13,7 @@ let waitingForIpDevice = false;
 let foundMacAddress = "";
 let foundIpAddress = "";
 let validMediolaFound = false;
+let sysvarInit = false;
 
 // links of interest:
 // https://github.com/ioBroker/AdapterRequests/issues/47 (main adapter request)
@@ -22,6 +23,10 @@ let validMediolaFound = false;
 type MediolaEvt = { type: string; data: string };
 function isMediolaEvt(o: any): o is MediolaEvt {
     return "type" in o && "data" in o;
+}
+type MediolaSysVarArray = [{ type: string; adr: string; state: string }];
+function isMediolaSysVarArray(o: any): o is MediolaSysVarArray {
+    return true;
 }
 
 // Load your modules here, e.g.:
@@ -37,7 +42,58 @@ class MediolaGateway extends utils.Adapter {
         this.on("stateChange", this.onStateChange.bind(this));
         this.on("unload", this.onUnload.bind(this));
     }
-
+    /**
+     * Is called when valid mediola found
+     * read all existing SysVars
+     */
+    private async readAllSystemVars(): Promise<void> {
+        if (validMediolaFound && !sysvarInit) {
+            sysvarInit = true;
+            let reqUrl = "http://" + foundIpAddress + "/command?XC_FNC=getstates";
+            reqUrl = encodeURI(reqUrl);
+            this.log.debug("url request to mediola: " + reqUrl);
+            axios
+                .get(reqUrl)
+                .then((res) => {
+                    this.log.debug(res.data);
+                    if (res.data.startsWith("{XC_SUC}")) {
+                        this.log.debug("mediola device found data: " + res.data);
+                        try {
+                            const jsonData = JSON.parse(res.data.substring(8));
+                            if (isMediolaSysVarArray(jsonData)) {
+                                if (jsonData.length > 0) {
+                                    for (let index = 0; index < jsonData.length; index++) {
+                                        const element = jsonData[index];
+                                        this.log.debug(JSON.stringify(element));
+                                        this.setObjectNotExists("id" + element.adr, {
+                                            type: "state",
+                                            common: {
+                                                name: "sysvar" + element.adr,
+                                                type: "string",
+                                                role: "text",
+                                                read: true,
+                                                write: false,
+                                            },
+                                            native: {},
+                                        });
+                                        this.setState("id" + element.adr, { val: element.state, ack: true });
+                                    }
+                                }
+                            } else {
+                                this.log.error("json format not known:" + res.data.substring(8));
+                            }
+                        } catch (error) {
+                            this.log.error("json format invalid:" + res.data.substring(8));
+                        }
+                    } else {
+                        this.log.error("mediola device rejected the request: " + res.data);
+                    }
+                })
+                .catch((error) => {
+                    this.log.debug(error);
+                });
+        }
+    }
     /**
      * Is called when databases are connected and adapter received configuration.
      */
@@ -73,13 +129,34 @@ class MediolaGateway extends utils.Adapter {
         inSocket.on("message", (message, remote) => {
             if (message.toString().startsWith("{XC_EVT}")) {
                 const eventData = message.toString().substring(8);
-                const jsonData = JSON.parse(eventData);
-                if (isMediolaEvt(jsonData)) {
-                    if (jsonData.type === "IR") {
-                        this.setState("receivedIrData", { val: jsonData.data, ack: true });
+                try {
+                    const jsonData = JSON.parse(eventData);
+                    if (isMediolaEvt(jsonData)) {
+                        if (jsonData.type === "IR") {
+                            this.setState("receivedIrData", { val: jsonData.data, ack: true });
+                        } else if (jsonData.type === "SV") {
+                            this.log.debug(JSON.stringify(jsonData));
+                            const data = jsonData.data;
+                            const index = data.substring(2, 4);
+                            const value = data.substring(5);
+                            if (data.startsWith("I:")) {
+                                this.setState("id" + index, { val: value, ack: true });
+                            } else if (data.startsWith("B:")) {
+                                this.setState("id" + index, { val: value, ack: true });
+                            } else if (data.startsWith("S:")) {
+                                this.setState("id" + index, { val: value, ack: true });
+                            } else if (data.startsWith("F:")) {
+                                // never reached yet, because invalid json chars in floats
+                                this.setState("id" + index, { val: value, ack: true });
+                            } else {
+                                this.log.debug("data type not known");
+                            }
+                        }
+                    } else {
+                        this.log.error("json format not known:" + message);
                     }
-                } else {
-                    this.log.error("json format not known:" + message);
+                } catch (error) {
+                    this.log.error("json format invalid:" + message);
                 }
             } else {
                 this.log.debug(`in RECEIVED unknow message: ${remote.address}:${remote.port}-${message}|end`);
@@ -139,6 +216,9 @@ class MediolaGateway extends utils.Adapter {
                             this.log.info(`Mediola connected with ip:${ipAddress} and mac:${macAddress}`);
                             validMediolaFound = true;
                         }
+                    }
+                    if (validMediolaFound === true) {
+                        this.readAllSystemVars();
                     }
                 } else {
                     this.log.error("unkown device on this port");

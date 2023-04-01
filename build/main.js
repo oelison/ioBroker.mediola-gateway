@@ -28,8 +28,12 @@ let waitingForIpDevice = false;
 let foundMacAddress = "";
 let foundIpAddress = "";
 let validMediolaFound = false;
+let sysvarInit = false;
 function isMediolaEvt(o) {
   return "type" in o && "data" in o;
+}
+function isMediolaSysVarArray(o) {
+  return true;
 }
 class MediolaGateway extends utils.Adapter {
   constructor(options = {}) {
@@ -40,6 +44,51 @@ class MediolaGateway extends utils.Adapter {
     this.on("ready", this.onReady.bind(this));
     this.on("stateChange", this.onStateChange.bind(this));
     this.on("unload", this.onUnload.bind(this));
+  }
+  async readAllSystemVars() {
+    if (validMediolaFound && !sysvarInit) {
+      sysvarInit = true;
+      let reqUrl = "http://" + foundIpAddress + "/command?XC_FNC=getstates";
+      reqUrl = encodeURI(reqUrl);
+      this.log.debug("url request to mediola: " + reqUrl);
+      import_axios.default.get(reqUrl).then((res) => {
+        this.log.debug(res.data);
+        if (res.data.startsWith("{XC_SUC}")) {
+          this.log.debug("mediola device found data: " + res.data);
+          try {
+            const jsonData = JSON.parse(res.data.substring(8));
+            if (isMediolaSysVarArray(jsonData)) {
+              if (jsonData.length > 0) {
+                for (let index = 0; index < jsonData.length; index++) {
+                  const element = jsonData[index];
+                  this.log.debug(JSON.stringify(element));
+                  this.setObjectNotExists("id" + element.adr, {
+                    type: "state",
+                    common: {
+                      name: "sysvar" + element.adr,
+                      type: "string",
+                      role: "text",
+                      read: true,
+                      write: false
+                    },
+                    native: {}
+                  });
+                  this.setState("id" + element.adr, { val: element.state, ack: true });
+                }
+              }
+            } else {
+              this.log.error("json format not known:" + res.data.substring(8));
+            }
+          } catch (error) {
+            this.log.error("json format invalid:" + res.data.substring(8));
+          }
+        } else {
+          this.log.error("mediola device rejected the request: " + res.data);
+        }
+      }).catch((error) => {
+        this.log.debug(error);
+      });
+    }
   }
   async onReady() {
     this.setState("info.connection", false, true);
@@ -70,13 +119,33 @@ class MediolaGateway extends utils.Adapter {
     inSocket.on("message", (message, remote) => {
       if (message.toString().startsWith("{XC_EVT}")) {
         const eventData = message.toString().substring(8);
-        const jsonData = JSON.parse(eventData);
-        if (isMediolaEvt(jsonData)) {
-          if (jsonData.type === "IR") {
-            this.setState("receivedIrData", { val: jsonData.data, ack: true });
+        try {
+          const jsonData = JSON.parse(eventData);
+          if (isMediolaEvt(jsonData)) {
+            if (jsonData.type === "IR") {
+              this.setState("receivedIrData", { val: jsonData.data, ack: true });
+            } else if (jsonData.type === "SV") {
+              this.log.debug(JSON.stringify(jsonData));
+              const data = jsonData.data;
+              const index = data.substring(2, 4);
+              const value = data.substring(5);
+              if (data.startsWith("I:")) {
+                this.setState("id" + index, { val: value, ack: true });
+              } else if (data.startsWith("B:")) {
+                this.setState("id" + index, { val: value, ack: true });
+              } else if (data.startsWith("S:")) {
+                this.setState("id" + index, { val: value, ack: true });
+              } else if (data.startsWith("F:")) {
+                this.setState("id" + index, { val: value, ack: true });
+              } else {
+                this.log.debug("data type not known");
+              }
+            }
+          } else {
+            this.log.error("json format not known:" + message);
           }
-        } else {
-          this.log.error("json format not known:" + message);
+        } catch (error) {
+          this.log.error("json format invalid:" + message);
         }
       } else {
         this.log.debug(`in RECEIVED unknow message: ${remote.address}:${remote.port}-${message}|end`);
@@ -128,6 +197,9 @@ class MediolaGateway extends utils.Adapter {
               this.log.info(`Mediola connected with ip:${ipAddress} and mac:${macAddress}`);
               validMediolaFound = true;
             }
+          }
+          if (validMediolaFound === true) {
+            this.readAllSystemVars();
           }
         } else {
           this.log.error("unkown device on this port");
