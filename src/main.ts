@@ -94,6 +94,8 @@ class MediolaGateway extends utils.Adapter {
                 });
         }
     }
+    // lern call
+    // http://ipaddress/command?XC_FNC=Learn
     // set calls
     // http://ipaddress/command?XC_FNC=setVar&id=01&type=ONOFF&value=off
     // http://ipaddress/command?XC_FNC=setVar&id=01&type=ONOFF&value=on
@@ -269,7 +271,19 @@ class MediolaGateway extends utils.Adapter {
             },
             native: {},
         });
+        await this.setObjectNotExistsAsync("sendRfData", {
+            type: "state",
+            common: {
+                name: "sendRfData",
+                type: "string",
+                role: "text",
+                read: true,
+                write: true,
+            },
+            native: {},
+        });
         this.subscribeStates("sendIrData");
+        this.subscribeStates("sendRfData");
     }
 
     /**
@@ -296,6 +310,24 @@ class MediolaGateway extends utils.Adapter {
                 this.log.debug("try send: " + state.val);
                 if (validMediolaFound) {
                     let reqUrl = "http://" + foundIpAddress + "/command?XC_FNC=Send2&code=" + state.val;
+                    reqUrl = encodeURI(reqUrl);
+                    this.log.debug("url request to mediola: " + reqUrl);
+                    axios
+                        .get(reqUrl)
+                        .then((res) => {
+                            this.log.debug(res.data);
+                            if (res.data != "{XC_SUC}") {
+                                this.log.error("mediola device rejected the command: " + state.val);
+                            }
+                        })
+                        .catch((error) => {
+                            this.log.debug(error);
+                        });
+                }
+            } else if (id.endsWith("sendRfData")) {
+                this.log.debug("try send: " + state.val);
+                if (validMediolaFound) {
+                    let reqUrl = "http://" + foundIpAddress + "/command?XC_FNC=Send2&ir=00&rf=01&code=" + state.val;
                     reqUrl = encodeURI(reqUrl);
                     this.log.debug("url request to mediola: " + reqUrl);
                     axios
