@@ -19,11 +19,6 @@ Configuration and usage of Mediola-Gateways
 
 DISCLAIMER All product and company names or logos are Trademarks™ or Registered® Trademarks of their respective owners. Their use does not imply any Affiliation or endorsement by them or associated affiliates! This personal project is being pursued on a recreational basis and Has no business objectives. mediola is a trademark of mediola - connected living AG.
 
-### Best Practices
-
-We've collected some [best practices](https://github.com/ioBroker/ioBroker.repositories#development-and-coding-best-practices) regarding ioBroker development and coding in general. If you're new to ioBroker or Node.js, you should
-check them out. If you're already experienced, you should also take a look at them - you might learn something new :)
-
 ## Changelog
 
 <!--
@@ -31,7 +26,7 @@ check them out. If you're already experienced, you should also take a look at th
     ### **WORK IN PROGRESS**
 -->
 
-### **WORK IN PROGRESS**
+### 0.1.0 (2023-05-03)
 
 -   initial release
 -   send ir (only IR_ID 01 front IR)
