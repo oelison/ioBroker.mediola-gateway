@@ -26,6 +26,10 @@ DISCLAIMER All product and company names or logos are Trademarks™ or Registere
     ### **WORK IN PROGRESS**
 -->
 
+### **WORK IN PROGRESS**
+
+-   dependencies update
+
 ### 0.1.0 (2023-05-03)
 
 -   initial release
