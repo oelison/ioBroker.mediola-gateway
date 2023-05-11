@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "mediola-gateway",
-    "version": "0.1.0",
+    "version": "0.1.1",
     "news": {
+      "0.1.1": {
+        "en": "dependencies update",
+        "de": "aktualisierung der abhängigkeiten",
+        "ru": "обновление зависимости",
+        "pt": "atualização de dependências",
+        "nl": "afhankelijke update",
+        "fr": "mise à jour des dépendances",
+        "it": "aggiornamento delle dipendenze",
+        "es": "actualización de las dependencias",
+        "pl": "aktualizacja",
+        "uk": "оновлення залежності",
+        "zh-cn": "a. 应急"
+      },
       "0.1.0": {
         "en": "initial release\nsend ir (only IR_ID 01 front IR)\nreveive ir",
         "de": "erstausstrahlung\nsenden ir (nur IR_ID 01 front IR)\nreveive-ir",
