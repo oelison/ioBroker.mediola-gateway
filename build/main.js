@@ -73,7 +73,7 @@ class MediolaGateway extends utils.Adapter {
                     },
                     native: {}
                   });
-                  this.setState("id" + element.adr, { val: element.state, ack: true });
+                  this.setState("id" + element.adr, { val: element.state, ack: false });
                 }
               }
             } else {
@@ -123,20 +123,20 @@ class MediolaGateway extends utils.Adapter {
           const jsonData = JSON.parse(eventData);
           if (isMediolaEvt(jsonData)) {
             if (jsonData.type === "IR") {
-              this.setState("receivedIrData", { val: jsonData.data, ack: true });
+              this.setState("receivedIrData", { val: jsonData.data, ack: false });
             } else if (jsonData.type === "SV") {
               this.log.debug(JSON.stringify(jsonData));
               const data = jsonData.data;
               const index = data.substring(2, 4);
               const value = data.substring(5);
               if (data.startsWith("I:")) {
-                this.setState("id" + index, { val: value, ack: true });
+                this.setState("id" + index, { val: value, ack: false });
               } else if (data.startsWith("B:")) {
-                this.setState("id" + index, { val: value, ack: true });
+                this.setState("id" + index, { val: value, ack: false });
               } else if (data.startsWith("S:")) {
-                this.setState("id" + index, { val: value, ack: true });
+                this.setState("id" + index, { val: value, ack: false });
               } else if (data.startsWith("F:")) {
-                this.setState("id" + index, { val: value, ack: true });
+                this.setState("id" + index, { val: value, ack: false });
               } else {
                 this.log.debug("data type not known");
               }

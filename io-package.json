@@ -1,135 +1,158 @@
 {
-    "common": {
-        "name": "mediola-gateway",
-        "version": "0.1.1",
-        "news": {
-            "0.1.1": {
-                "en": "dependencies update",
-                "de": "aktualisierung der abhängigkeiten",
-                "ru": "обновление зависимости",
-                "pt": "atualização de dependências",
-                "nl": "afhankelijke update",
-                "fr": "mise à jour des dépendances",
-                "it": "aggiornamento delle dipendenze",
-                "es": "actualización de las dependencias",
-                "pl": "aktualizacja",
-                "uk": "оновлення залежності",
-                "zh-cn": "a. 应急"
-            },
-            "0.1.0": {
-                "en": "initial release\nsend ir (only IR_ID 01 front IR)\nreveive ir",
-                "de": "erstausstrahlung\nsenden ir (nur IR_ID 01 front IR)\nreveive-ir",
-                "ru": "начальный выпуск\nотправить ir (только IR_ID 01 передний IR)\nоткровенный ir",
-                "pt": "lançamento inicial\nenviar ir (apenas IR_ID 01 frente IR)\nrevejoso ir",
-                "nl": "niet\nverstuur \nreve",
-                "fr": "initial release\nenvoyer ir (uniquement IR_ID 01 avant IR)\nreveive ir",
-                "it": "rilascio iniziale\ninviare ir (solo IR_ID 01 anteriore IR)\n)",
-                "es": "liberación inicial\nenviar ir (sólo IR_ID 01 delantero IR)\nreveive ir",
-                "pl": "pierwsze wydanie\niR_ID 01 front IR (ang.)\nrewitalizacja",
-                "uk": "початковий реліз\nвідправити ir (тільки IR_ID 01 передній IR)\nревенивний ir",
-                "zh-cn": "初步释放\n送信(即IR_ID 001前 IR)\n重新定性"
-            },
-            "0.0.1": {
-                "en": "initial release",
-                "de": "Erstveröffentlichung",
-                "ru": "Начальная версия",
-                "pt": "lançamento inicial",
-                "nl": "Eerste uitgave",
-                "fr": "Première version",
-                "it": "Versione iniziale",
-                "es": "Versión inicial",
-                "pl": "Pierwsze wydanie",
-                "zh-cn": "首次出版",
-                "uk": "початковий випуск"
-            }
-        },
-        "titleLang": {
-            "en": "mediola GW",
-            "de": "mediola GW",
-            "ru": "Медиола GW",
-            "pt": "mediola GW",
-            "nl": "mediola GW",
-            "fr": "médiole GW",
-            "it": "mediola GW",
-            "es": "mediola gw",
-            "pl": "mediala GW",
-            "zh-cn": "梅迪奥拉 GW",
-            "uk": "mediola GW"
-        },
-        "desc": {
-            "en": "Konfiguration und Verwendung des Mediola-Gateways",
-            "de": "Konfiguration und Verwendung des Mediola-Gateways",
-            "ru": "Конфигурация и проверка шлюзов Mediola",
-            "pt": "Konfiguration und Verwendung des Mediola-Gateways",
-            "nl": "Configuratie en gebruik van Mediola-Gateways",
-            "fr": "Configuration et Verwendung des Mediola-Gateways",
-            "it": "Configurazione e verifica dei gateway Mediola",
-            "es": "Konfiguration und Verwendung des Mediola-Gateways",
-            "pl": "Konfiguration und Verwendung des Mediola-Gateways",
-            "zh-cn": "Mediola-Gateways 的配置和配置",
-            "uk": "Configuration und Verwendung des Mediola-Gateways"
-        },
-        "authors": ["oelison <iobrokermediola@sciphy.de>"],
-        "keywords": ["media", "gateway", "mediola"],
-        "license": "MIT",
-        "platform": "Javascript/Node.js",
-        "main": "build/main.js",
-        "icon": "mediola-gateway.png",
-        "enabled": true,
-        "extIcon": "https://raw.githubusercontent.com/oelison/ioBroker.mediola-gateway/main/admin/mediola-gateway.png",
-        "readme": "https://github.com/oelison/ioBroker.mediola-gateway/blob/main/README.md",
-        "loglevel": "info",
-        "mode": "daemon",
-        "type": "multimedia",
-        "compact": true,
-        "connectionType": "local",
-        "dataSource": "push",
-        "adminUI": {
-            "config": "json"
-        },
-        "dependencies": [
-            {
-                "js-controller": ">=3.3.22"
-            }
-        ],
-        "globalDependencies": [
-            {
-                "admin": ">=5.1.13"
-            }
-        ]
+  "common": {
+    "name": "mediola-gateway",
+    "version": "0.1.2",
+    "news": {
+      "0.1.2": {
+        "en": "npm deploy activated\nReadme improved",
+        "de": "npm aktiviert\nReader verbessert",
+        "ru": "npm развернуть активирован\nReadme улучшено",
+        "pt": "npm deploy ativado\nMelhoria da leitura",
+        "nl": "npm ingezet\nVerbeter me",
+        "fr": "npm déployer activé\nReadme améliorée",
+        "it": "npm deploy attivato\nReadme migliorato",
+        "es": "npm desplegable activado\nMejorado",
+        "pl": "rozwijanie gniazda aktywowane\nReady",
+        "uk": "npm активовано\nПокращений",
+        "zh-cn": "未部署\n阅读摘要"
+      },
+      "0.1.1": {
+        "en": "dependencies update",
+        "de": "aktualisierung der abhängigkeiten",
+        "ru": "обновление зависимости",
+        "pt": "atualização de dependências",
+        "nl": "afhankelijke update",
+        "fr": "mise à jour des dépendances",
+        "it": "aggiornamento delle dipendenze",
+        "es": "actualización de las dependencias",
+        "pl": "aktualizacja",
+        "uk": "оновлення залежності",
+        "zh-cn": "a. 应急"
+      },
+      "0.1.0": {
+        "en": "initial release\nsend ir (only IR_ID 01 front IR)\nreveive ir",
+        "de": "erstausstrahlung\nsenden ir (nur IR_ID 01 front IR)\nreveive-ir",
+        "ru": "начальный выпуск\nотправить ir (только IR_ID 01 передний IR)\nоткровенный ir",
+        "pt": "lançamento inicial\nenviar ir (apenas IR_ID 01 frente IR)\nrevejoso ir",
+        "nl": "niet\nverstuur \nreve",
+        "fr": "initial release\nenvoyer ir (uniquement IR_ID 01 avant IR)\nreveive ir",
+        "it": "rilascio iniziale\ninviare ir (solo IR_ID 01 anteriore IR)\n)",
+        "es": "liberación inicial\nenviar ir (sólo IR_ID 01 delantero IR)\nreveive ir",
+        "pl": "pierwsze wydanie\niR_ID 01 front IR (ang.)\nrewitalizacja",
+        "uk": "початковий реліз\nвідправити ir (тільки IR_ID 01 передній IR)\nревенивний ir",
+        "zh-cn": "初步释放\n送信(即IR_ID 001前 IR)\n重新定性"
+      },
+      "0.0.1": {
+        "en": "initial release",
+        "de": "Erstveröffentlichung",
+        "ru": "Начальная версия",
+        "pt": "lançamento inicial",
+        "nl": "Eerste uitgave",
+        "fr": "Première version",
+        "it": "Versione iniziale",
+        "es": "Versión inicial",
+        "pl": "Pierwsze wydanie",
+        "zh-cn": "首次出版",
+        "uk": "початковий випуск"
+      }
     },
-    "encryptedNative": ["password"],
-    "protectedNative": ["password"],
-    "native": {
-        "autoDetect": true,
-        "findByMAC": false,
-        "mac": "00:00:00:00:00:00",
-        "findByIp": false,
-        "ip": "192.168.0.1",
-        "password": ""
+    "titleLang": {
+      "en": "mediola GW",
+      "de": "mediola GW",
+      "ru": "Медиола GW",
+      "pt": "mediola GW",
+      "nl": "mediola GW",
+      "fr": "médiole GW",
+      "it": "mediola GW",
+      "es": "mediola gw",
+      "pl": "mediala GW",
+      "zh-cn": "梅迪奥拉 GW",
+      "uk": "mediola GW"
     },
-    "objects": [],
-    "instanceObjects": [
-        {
-            "_id": "info",
-            "type": "channel",
-            "common": {
-                "name": "Information"
-            },
-            "native": {}
-        },
-        {
-            "_id": "info.connection",
-            "type": "state",
-            "common": {
-                "role": "indicator.connected",
-                "name": "Device or service connected",
-                "type": "boolean",
-                "read": true,
-                "write": false,
-                "def": false
-            },
-            "native": {}
-        }
+    "desc": {
+      "en": "Konfiguration und Verwendung des Mediola-Gateways",
+      "de": "Konfiguration und Verwendung des Mediola-Gateways",
+      "ru": "Конфигурация и проверка шлюзов Mediola",
+      "pt": "Konfiguration und Verwendung des Mediola-Gateways",
+      "nl": "Configuratie en gebruik van Mediola-Gateways",
+      "fr": "Configuration et Verwendung des Mediola-Gateways",
+      "it": "Configurazione e verifica dei gateway Mediola",
+      "es": "Konfiguration und Verwendung des Mediola-Gateways",
+      "pl": "Konfiguration und Verwendung des Mediola-Gateways",
+      "zh-cn": "Mediola-Gateways 的配置和配置",
+      "uk": "Configuration und Verwendung des Mediola-Gateways"
+    },
+    "authors": [
+      "oelison <iobrokermediola@sciphy.de>"
+    ],
+    "keywords": [
+      "media",
+      "gateway",
+      "mediola"
+    ],
+    "license": "MIT",
+    "platform": "Javascript/Node.js",
+    "main": "build/main.js",
+    "icon": "mediola-gateway.png",
+    "enabled": true,
+    "extIcon": "https://raw.githubusercontent.com/oelison/ioBroker.mediola-gateway/main/admin/mediola-gateway.png",
+    "readme": "https://github.com/oelison/ioBroker.mediola-gateway/blob/main/README.md",
+    "loglevel": "info",
+    "mode": "daemon",
+    "type": "multimedia",
+    "compact": true,
+    "connectionType": "local",
+    "dataSource": "push",
+    "adminUI": {
+      "config": "json"
+    },
+    "dependencies": [
+      {
+        "js-controller": ">=3.3.22"
+      }
+    ],
+    "globalDependencies": [
+      {
+        "admin": ">=5.1.13"
+      }
     ]
+  },
+  "encryptedNative": [
+    "password"
+  ],
+  "protectedNative": [
+    "password"
+  ],
+  "native": {
+    "autoDetect": true,
+    "findByMAC": false,
+    "mac": "00:00:00:00:00:00",
+    "findByIp": false,
+    "ip": "192.168.0.1",
+    "password": ""
+  },
+  "objects": [],
+  "instanceObjects": [
+    {
+      "_id": "info",
+      "type": "channel",
+      "common": {
+        "name": "Information"
+      },
+      "native": {}
+    },
+    {
+      "_id": "info.connection",
+      "type": "state",
+      "common": {
+        "role": "indicator.connected",
+        "name": "Device or service connected",
+        "type": "boolean",
+        "read": true,
+        "write": false,
+        "def": false
+      },
+      "native": {}
+    }
+  ]
 }
