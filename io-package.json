@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "mediola-gateway",
-    "version": "0.1.2",
+    "version": "0.1.3",
     "news": {
+      "0.1.3": {
+        "en": "test and release script corrected",
+        "de": "test- und releaseskript korrigiert",
+        "ru": "тест и релиз скрипт исправлен",
+        "pt": "test e release script corrigido",
+        "nl": "de test en het script gecorrigeerd",
+        "fr": "test and release script corrected",
+        "it": "test e script di rilascio corretto",
+        "es": "test y script de liberación corregido",
+        "pl": "testy i wydanie skryptu poprawnie poprawiają",
+        "uk": "тестування і реліз сценарії виправлено",
+        "zh-cn": "试验和释放经纠正"
+      },
       "0.1.2": {
         "en": "npm deploy activated\nReadme improved",
         "de": "npm aktiviert\nReader verbessert",

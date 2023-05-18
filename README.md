@@ -32,8 +32,7 @@ DISCLAIMER All product and company names or logos are Trademarks™ or Registere
     Placeholder for the next version (at the beginning of the line):
     ### **WORK IN PROGRESS**
 -->
-
-### **WORK IN PROGRESS**
+### 0.1.3 (2023-05-18)
 
 -   test and release script corrected
 
