@@ -15,6 +15,13 @@
 
 Configuration and usage of Mediola-Gateways
 
+## usage with e.g. mediola gateway V4
+
+When you have only one Mediola Gateway (https://www.mediola.com/), auto detection is the best way to get started. In the logs the detected IP-Address and MAC-Address is after detection visible. When you have more then one Mediola Gateways, it is better to give the adapter the MAC-Address. Then this specific Gateway will be found. It is also possible to use the IP-Address, when this is not changing and better known than the MAC-Address.
+After the adapter has found the Mediola Gateway, the instance become green and the objects receivedIrData, sendIrData and sendRfData are usable. When you have sys vars in the Mediola Gateway, they will be listed also in the object list. After some time, mostly the receivedIrData is changing. This represents the received IR date in the room, where the Mediola Gateway is located.
+Every change of the sys vars will also be shown there and could be used for automation.
+The sendIrData is tested with several learned IR codes. Just putting the IR code into the object to send the data.
+
 ### DISCLAIMER
 
 DISCLAIMER All product and company names or logos are Trademarks™ or Registered® Trademarks of their respective owners. Their use does not imply any Affiliation or endorsement by them or associated affiliates! This personal project is being pursued on a recreational basis and Has no business objectives. mediola is a trademark of mediola - connected living AG.
@@ -25,6 +32,12 @@ DISCLAIMER All product and company names or logos are Trademarks™ or Registere
     Placeholder for the next version (at the beginning of the line):
     ### **WORK IN PROGRESS**
 -->
+
+### **WORK IN PROGRESS**
+
+-   npm deploy activated
+-   Readme improved
+
 ### 0.1.1 (2023-05-11)
 
 -   dependencies update

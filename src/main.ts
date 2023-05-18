@@ -65,6 +65,7 @@ class MediolaGateway extends utils.Adapter {
                                     for (let index = 0; index < jsonData.length; index++) {
                                         const element = jsonData[index];
                                         this.log.debug(JSON.stringify(element));
+                                        // element.adr is from 01 to ff, no invalid chars possible according specification
                                         this.setObjectNotExists("id" + element.adr, {
                                             type: "state",
                                             common: {
@@ -76,7 +77,7 @@ class MediolaGateway extends utils.Adapter {
                                             },
                                             native: {},
                                         });
-                                        this.setState("id" + element.adr, { val: element.state, ack: true });
+                                        this.setState("id" + element.adr, { val: element.state, ack: false });
                                     }
                                 }
                             } else {
@@ -153,21 +154,21 @@ class MediolaGateway extends utils.Adapter {
                     const jsonData = JSON.parse(eventData);
                     if (isMediolaEvt(jsonData)) {
                         if (jsonData.type === "IR") {
-                            this.setState("receivedIrData", { val: jsonData.data, ack: true });
+                            this.setState("receivedIrData", { val: jsonData.data, ack: false });
                         } else if (jsonData.type === "SV") {
                             this.log.debug(JSON.stringify(jsonData));
                             const data = jsonData.data;
                             const index = data.substring(2, 4);
                             const value = data.substring(5);
                             if (data.startsWith("I:")) {
-                                this.setState("id" + index, { val: value, ack: true });
+                                this.setState("id" + index, { val: value, ack: false });
                             } else if (data.startsWith("B:")) {
-                                this.setState("id" + index, { val: value, ack: true });
+                                this.setState("id" + index, { val: value, ack: false });
                             } else if (data.startsWith("S:")) {
-                                this.setState("id" + index, { val: value, ack: true });
+                                this.setState("id" + index, { val: value, ack: false });
                             } else if (data.startsWith("F:")) {
                                 // never reached yet, because invalid json chars in floats
-                                this.setState("id" + index, { val: value, ack: true });
+                                this.setState("id" + index, { val: value, ack: false });
                             } else {
                                 this.log.debug("data type not known");
                             }
