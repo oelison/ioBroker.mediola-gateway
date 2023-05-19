@@ -32,6 +32,14 @@ DISCLAIMER All product and company names or logos are Trademarks™ or Registere
     Placeholder for the next version (at the beginning of the line):
     ### **WORK IN PROGRESS**
 -->
+
+### **WORK IN PROGRESS**
+
+-   axios with log error on error
+-   ack true for readonly objects
+-   ack check on state change
+-   invalid chars checked
+
 ### 0.1.3 (2023-05-18)
 
 -   test and release script corrected

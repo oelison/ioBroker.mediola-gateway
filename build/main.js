@@ -45,6 +45,14 @@ class MediolaGateway extends utils.Adapter {
     this.on("stateChange", this.onStateChange.bind(this));
     this.on("unload", this.onUnload.bind(this));
   }
+  validName(Name) {
+    const CheckName = Name.replace(this.FORBIDDEN_CHARS, "_");
+    if (CheckName == Name) {
+      return true;
+    } else {
+      return false;
+    }
+  }
   async readAllSystemVars() {
     if (validMediolaFound && !sysvarInit) {
       sysvarInit = true;
@@ -62,18 +70,24 @@ class MediolaGateway extends utils.Adapter {
                 for (let index = 0; index < jsonData.length; index++) {
                   const element = jsonData[index];
                   this.log.debug(JSON.stringify(element));
-                  this.setObjectNotExists("id" + element.adr, {
-                    type: "state",
-                    common: {
-                      name: "sysvar" + element.adr,
-                      type: "string",
-                      role: "text",
-                      read: true,
-                      write: false
-                    },
-                    native: {}
-                  });
-                  this.setState("id" + element.adr, { val: element.state, ack: false });
+                  if (this.validName(element.adr)) {
+                    this.setObjectNotExists("id" + element.adr, {
+                      type: "state",
+                      common: {
+                        name: "sysvar" + element.adr,
+                        type: "string",
+                        role: "text",
+                        read: true,
+                        write: false
+                      },
+                      native: {}
+                    });
+                    this.setState("id" + element.adr, { val: element.state, ack: true });
+                  } else {
+                    this.log.error(
+                      "invalid sys var name from mediola device element.adr = " + element.adr
+                    );
+                  }
                 }
               }
             } else {
@@ -86,6 +100,8 @@ class MediolaGateway extends utils.Adapter {
           this.log.error("mediola device rejected the request: " + res.data);
         }
       }).catch((error) => {
+        sysvarInit = false;
+        this.log.error("mediola device not reached by getting sys vars");
         this.log.debug(error);
       });
     }
@@ -123,20 +139,20 @@ class MediolaGateway extends utils.Adapter {
           const jsonData = JSON.parse(eventData);
           if (isMediolaEvt(jsonData)) {
             if (jsonData.type === "IR") {
-              this.setState("receivedIrData", { val: jsonData.data, ack: false });
+              this.setState("receivedIrData", { val: jsonData.data, ack: true });
             } else if (jsonData.type === "SV") {
               this.log.debug(JSON.stringify(jsonData));
               const data = jsonData.data;
               const index = data.substring(2, 4);
               const value = data.substring(5);
               if (data.startsWith("I:")) {
-                this.setState("id" + index, { val: value, ack: false });
+                this.setState("id" + index, { val: value, ack: true });
               } else if (data.startsWith("B:")) {
-                this.setState("id" + index, { val: value, ack: false });
+                this.setState("id" + index, { val: value, ack: true });
               } else if (data.startsWith("S:")) {
-                this.setState("id" + index, { val: value, ack: false });
+                this.setState("id" + index, { val: value, ack: true });
               } else if (data.startsWith("F:")) {
-                this.setState("id" + index, { val: value, ack: false });
+                this.setState("id" + index, { val: value, ack: true });
               } else {
                 this.log.debug("data type not known");
               }
@@ -269,6 +285,7 @@ class MediolaGateway extends utils.Adapter {
               this.log.error("mediola device rejected the command: " + state.val);
             }
           }).catch((error) => {
+            this.log.error("mediola device not reached by sending IR data");
             this.log.debug(error);
           });
         }
@@ -284,6 +301,7 @@ class MediolaGateway extends utils.Adapter {
               this.log.error("mediola device rejected the command: " + state.val);
             }
           }).catch((error) => {
+            this.log.error("mediola device not reached by sending rf data");
             this.log.debug(error);
           });
         }
