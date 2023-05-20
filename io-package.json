@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "mediola-gateway",
-    "version": "0.1.3",
+    "version": "0.1.4",
     "news": {
+      "0.1.4": {
+        "en": "axios with log error on error\nack true for readonly objects\nack check on state change\ninvalid chars checked",
+        "de": "axios mit log-fehler auf fehler\nack wahr für leseobjekte\nack check on state change\nungültige zeichen geprüft",
+        "ru": "axios с ошибкой в журнале об ошибке\nack true для читательных объектов\nпроверка на изменение состояния\nнедействительные заряды проверены",
+        "pt": "axios com erro de log no erro\nack true para objetos somente leitura\nack check on mudança de estado\ninválidos verificadas",
+        "nl": "axios met logfout\nack waar voor lasonly objecten\nack check of state change\ninvalide charisaties gecontroleerd",
+        "fr": "axios avec erreur de journal sur erreur\nack true for readonly objects\nack check on state change\nnon valides",
+        "it": "assio con errore di registro sull'errore\nack vero per oggetti in sola lettura\nack check sul cambiamento di stato\nnon valido",
+        "es": "axios con error de registro en error\nack verdadero para objetos de sólo lectura\nack check on state change\nacreditados inválidos",
+        "pl": "axie z błędem logicznym\nposługuje się czytelnikiem obiektów\nodpowiada w sprawie zmiany stanu\nkaroseria",
+        "uk": "axios з лог-повідомлення про помилку\nack true for readonly предмети\nконтроль стану\nнедійсні заїзди",
+        "zh-cn": "a 错误的逻辑错误\n目 录\n国家变化检查\n检查无效的指控"
+      },
       "0.1.3": {
         "en": "test and release script corrected",
         "de": "test- und releaseskript korrigiert",

@@ -1,6 +1,6 @@
 {
   "name": "iobroker.mediola-gateway",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "description": "Konfiguration und Verwendung des Mediola-Gateways",
   "author": {
     "name": "oelison",

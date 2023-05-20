@@ -102,7 +102,7 @@ class MediolaGateway extends utils.Adapter {
       }).catch((error) => {
         sysvarInit = false;
         this.log.error("mediola device not reached by getting sys vars");
-        this.log.debug(error);
+        this.log.error(error);
       });
     }
   }
@@ -273,37 +273,39 @@ class MediolaGateway extends utils.Adapter {
   onStateChange(id, state) {
     if (state) {
       this.log.info(`state ${id} changed: ${state.val} (ack = ${state.ack})`);
-      if (id.endsWith("sendIrData")) {
-        this.log.debug("try send: " + state.val);
-        if (validMediolaFound) {
-          let reqUrl = "http://" + foundIpAddress + "/command?XC_FNC=Send2&code=" + state.val;
-          reqUrl = encodeURI(reqUrl);
-          this.log.debug("url request to mediola: " + reqUrl);
-          import_axios.default.get(reqUrl).then((res) => {
-            this.log.debug(res.data);
-            if (res.data != "{XC_SUC}") {
-              this.log.error("mediola device rejected the command: " + state.val);
-            }
-          }).catch((error) => {
-            this.log.error("mediola device not reached by sending IR data");
-            this.log.debug(error);
-          });
-        }
-      } else if (id.endsWith("sendRfData")) {
-        this.log.debug("try send: " + state.val);
-        if (validMediolaFound) {
-          let reqUrl = "http://" + foundIpAddress + "/command?XC_FNC=Send2&ir=00&rf=01&code=" + state.val;
-          reqUrl = encodeURI(reqUrl);
-          this.log.debug("url request to mediola: " + reqUrl);
-          import_axios.default.get(reqUrl).then((res) => {
-            this.log.debug(res.data);
-            if (res.data != "{XC_SUC}") {
-              this.log.error("mediola device rejected the command: " + state.val);
-            }
-          }).catch((error) => {
-            this.log.error("mediola device not reached by sending rf data");
-            this.log.debug(error);
-          });
+      if (state.ack === false) {
+        if (id.endsWith("sendIrData")) {
+          this.log.debug("try send: " + state.val);
+          if (validMediolaFound) {
+            let reqUrl = "http://" + foundIpAddress + "/command?XC_FNC=Send2&code=" + state.val;
+            reqUrl = encodeURI(reqUrl);
+            this.log.debug("url request to mediola: " + reqUrl);
+            import_axios.default.get(reqUrl).then((res) => {
+              this.log.debug(res.data);
+              if (res.data != "{XC_SUC}") {
+                this.log.error("mediola device rejected the command: " + state.val);
+              }
+            }).catch((error) => {
+              this.log.error("mediola device not reached by sending IR data");
+              this.log.error(error);
+            });
+          }
+        } else if (id.endsWith("sendRfData")) {
+          this.log.debug("try send: " + state.val);
+          if (validMediolaFound) {
+            let reqUrl = "http://" + foundIpAddress + "/command?XC_FNC=Send2&ir=00&rf=01&code=" + state.val;
+            reqUrl = encodeURI(reqUrl);
+            this.log.debug("url request to mediola: " + reqUrl);
+            import_axios.default.get(reqUrl).then((res) => {
+              this.log.debug(res.data);
+              if (res.data != "{XC_SUC}") {
+                this.log.error("mediola device rejected the command: " + state.val);
+              }
+            }).catch((error) => {
+              this.log.error("mediola device not reached by sending rf data");
+              this.log.error(error);
+            });
+          }
         }
       }
     } else {
