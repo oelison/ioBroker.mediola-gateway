@@ -187,6 +187,9 @@ class MediolaGateway extends utils.Adapter {
           if (dataLine.startsWith("NAME:AIO GATEWAY")) {
             mediolaFound = true;
           }
+          if (dataLine.startsWith("NAME:WIR-CONNECT V6")) {
+            mediolaFound = true;
+          }
         }
         if (mediolaFound) {
           if (waitingForAnyDevice === true) {

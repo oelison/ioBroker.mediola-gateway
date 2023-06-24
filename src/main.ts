@@ -130,6 +130,7 @@ class MediolaGateway extends utils.Adapter {
     // {XC_EVT}{"type":"SV","data":"F:03:432"}
     // {XC_EVT}{"type":"SV","data":"S:04:abcdefghij"}
     // getstates
+    // http://ipaddress/command?XC_FNC=getstates
     // {XC_SUC}[
     //    {"type":"ONOFF","adr":"01","state":"on"},
     //    {"type":"INT","adr":"02","state":"00000007"},
@@ -229,6 +230,9 @@ class MediolaGateway extends utils.Adapter {
                         // });
                     }
                     if (dataLine.startsWith("NAME:AIO GATEWAY")) {
+                        mediolaFound = true;
+                    }
+                    if (dataLine.startsWith("NAME:WIR-CONNECT V6")) {
                         mediolaFound = true;
                     }
                 }
