@@ -177,6 +177,7 @@ class MediolaGateway extends utils.Adapter {
         let macAddress = "";
         let mediolaFound = false;
         for (const dataLine of dataLines) {
+          this.log.info(dataLine);
           if (dataLine.startsWith("IP:")) {
             ipAddress = dataLine.substring(3);
           }
