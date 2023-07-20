@@ -12,5 +12,7 @@
     "ip": "adresse IP",
     "helpIp": "par exemple. 123.234.12.45",
     "password": "Mot de passe",
-    "helpPassword": "Mot de passe de connexion Mediola"
+    "helpPassword": "Mot de passe de connexion Mediola",
+    "username": "nom d'utilisateur",
+    "helpUsername": "Nom de connexion Mediola"
 }

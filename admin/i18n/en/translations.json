@@ -11,6 +11,8 @@
     "helpFindByIp": "if the ip is not changing",
     "ip": "IP address",
     "helpIp": "e.g. 123.234.12.45",
+    "username": "username",
+    "helpUsername": "Mediola login name",
     "password": "Password",
     "helpPassword": "Mediola login password"
 }

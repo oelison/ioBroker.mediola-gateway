@@ -32,6 +32,12 @@ DISCLAIMER All product and company names or logos are Trademarks™ or Registere
     Placeholder for the next version (at the beginning of the line):
     ### **WORK IN PROGRESS**
 -->
+
+### **WORK IN PROGRESS**
+
+-   user and password login to mediola
+-   WIR system added
+
 ### 0.1.4 (2023-05-20)
 
 -   axios with log error on error

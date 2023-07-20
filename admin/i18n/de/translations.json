@@ -12,5 +12,7 @@
     "ip": "IP Adresse",
     "helpIp": "z.B. 123.234.12.45",
     "password": "Passwort",
-    "helpPassword": "Mediola-Login-Passwort"
+    "helpPassword": "Mediola-Login-Passwort",
+    "username": "Nutzername",
+    "helpUsername": "Mediola-Anmeldename"
 }

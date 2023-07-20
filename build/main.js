@@ -53,10 +53,19 @@ class MediolaGateway extends utils.Adapter {
       return false;
     }
   }
+  genURL() {
+    let retVal = "";
+    if (this.config.username === "") {
+      retVal = "http://" + foundIpAddress + "/command?";
+    } else {
+      retVal = "http://" + foundIpAddress + "/command?XC_USER=" + this.config.username + "&XC_PASS=" + this.config.password + "&";
+    }
+    return retVal;
+  }
   async readAllSystemVars() {
     if (validMediolaFound && !sysvarInit) {
       sysvarInit = true;
-      let reqUrl = "http://" + foundIpAddress + "/command?XC_FNC=getstates";
+      let reqUrl = this.genURL() + "XC_FNC=getstates";
       reqUrl = encodeURI(reqUrl);
       this.log.debug("url request to mediola: " + reqUrl);
       import_axios.default.get(reqUrl).then((res) => {
@@ -71,18 +80,32 @@ class MediolaGateway extends utils.Adapter {
                   const element = jsonData[index];
                   this.log.debug(JSON.stringify(element));
                   if (this.validName(element.adr)) {
-                    this.setObjectNotExists("id" + element.adr, {
+                    let objName = "";
+                    let description = "";
+                    let writable = false;
+                    let objState = "";
+                    if (element.type === "WR") {
+                      objName = element.type + element.adr;
+                      description = "WIR " + element.adr;
+                      writable = true;
+                      objState = "0";
+                    } else {
+                      objName = "id" + element.adr;
+                      description = "sysvar" + element.adr;
+                      objState = element.state;
+                    }
+                    this.setObjectNotExists(objName, {
                       type: "state",
                       common: {
-                        name: "sysvar" + element.adr,
+                        name: description,
                         type: "string",
                         role: "text",
                         read: true,
-                        write: false
+                        write: writable
                       },
                       native: {}
                     });
-                    this.setState("id" + element.adr, { val: element.state, ack: true });
+                    this.setState(objName, { val: objState, ack: true });
                   } else {
                     this.log.error(
                       "invalid sys var name from mediola device element.adr = " + element.adr
@@ -154,8 +177,13 @@ class MediolaGateway extends utils.Adapter {
               } else if (data.startsWith("F:")) {
                 this.setState("id" + index, { val: value, ack: true });
               } else {
-                this.log.debug("data type not known");
+                this.log.debug("sys var type not known: " + jsonData.data);
               }
+            } else if (jsonData.type === "WR") {
+              this.log.debug(JSON.stringify(jsonData));
+            } else {
+              this.log.debug("data type not known: " + jsonData.type);
+              this.log.debug(JSON.stringify(jsonData));
             }
           } else {
             this.log.error("json format not known:" + message);
@@ -281,7 +309,7 @@ class MediolaGateway extends utils.Adapter {
         if (id.endsWith("sendIrData")) {
           this.log.debug("try send: " + state.val);
           if (validMediolaFound) {
-            let reqUrl = "http://" + foundIpAddress + "/command?XC_FNC=Send2&code=" + state.val;
+            let reqUrl = this.genURL + "XC_FNC=Send2&code=" + state.val;
             reqUrl = encodeURI(reqUrl);
             this.log.debug("url request to mediola: " + reqUrl);
             import_axios.default.get(reqUrl).then((res) => {
@@ -297,7 +325,7 @@ class MediolaGateway extends utils.Adapter {
         } else if (id.endsWith("sendRfData")) {
           this.log.debug("try send: " + state.val);
           if (validMediolaFound) {
-            let reqUrl = "http://" + foundIpAddress + "/command?XC_FNC=Send2&ir=00&rf=01&code=" + state.val;
+            let reqUrl = this.genURL + "XC_FNC=Send2&ir=00&rf=01&code=" + state.val;
             reqUrl = encodeURI(reqUrl);
             this.log.debug("url request to mediola: " + reqUrl);
             import_axios.default.get(reqUrl).then((res) => {

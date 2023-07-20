@@ -12,5 +12,7 @@
     "ip": "adres IP",
     "helpIp": "np. 123.234.12.45",
     "password": "Hasło",
-    "helpPassword": "Hasło logowania Medioli"
+    "helpPassword": "Hasło logowania Medioli",
+    "username": "nazwa użytkownika",
+    "helpUsername": "Login firmy Mediola"
 }

@@ -19,6 +19,7 @@ let sysvarInit = false;
 // https://github.com/ioBroker/AdapterRequests/issues/47 (main adapter request)
 // https://github.com/ioBroker/AdapterRequests/issues/492 (868MHz request)
 // https://github.com/ioBroker/AdapterRequests/issues/60
+// https://github.com/ioBroker/AdapterRequests/issues/848 (WIR rolladen request)
 
 type MediolaEvt = { type: string; data: string };
 function isMediolaEvt(o: any): o is MediolaEvt {
@@ -54,13 +55,32 @@ class MediolaGateway extends utils.Adapter {
         }
     }
     /**
+     * create URL
+     */
+    private genURL(): string {
+        let retVal = "";
+        if (this.config.username === "") {
+            retVal = "http://" + foundIpAddress + "/command?";
+        } else {
+            retVal =
+                "http://" +
+                foundIpAddress +
+                "/command?XC_USER=" +
+                this.config.username +
+                "&XC_PASS=" +
+                this.config.password +
+                "&";
+        }
+        return retVal;
+    }
+    /**
      * Is called when valid mediola found
      * read all existing SysVars
      */
     private async readAllSystemVars(): Promise<void> {
         if (validMediolaFound && !sysvarInit) {
             sysvarInit = true;
-            let reqUrl = "http://" + foundIpAddress + "/command?XC_FNC=getstates";
+            let reqUrl = this.genURL() + "XC_FNC=getstates";
             reqUrl = encodeURI(reqUrl);
             this.log.debug("url request to mediola: " + reqUrl);
             axios
@@ -79,18 +99,32 @@ class MediolaGateway extends utils.Adapter {
                                         // element.adr is from 01 to ff, no invalid chars possible according specification
                                         // discard element, when not following the naming standart (just for sure)
                                         if (this.validName(element.adr)) {
-                                            this.setObjectNotExists("id" + element.adr, {
+                                            let objName = "";
+                                            let description = "";
+                                            let writable = false;
+                                            let objState = "";
+                                            if (element.type === "WR") {
+                                                objName = element.type + element.adr;
+                                                description = "WIR " + element.adr;
+                                                writable = true;
+                                                objState = "0";
+                                            } else {
+                                                objName = "id" + element.adr;
+                                                description = "sysvar" + element.adr;
+                                                objState = element.state;
+                                            }
+                                            this.setObjectNotExists(objName, {
                                                 type: "state",
                                                 common: {
-                                                    name: "sysvar" + element.adr,
+                                                    name: description,
                                                     type: "string",
                                                     role: "text",
                                                     read: true,
-                                                    write: false,
+                                                    write: writable,
                                                 },
                                                 native: {},
                                             });
-                                            this.setState("id" + element.adr, { val: element.state, ack: true });
+                                            this.setState(objName, { val: objState, ack: true });
                                         } else {
                                             this.log.error(
                                                 "invalid sys var name from mediola device element.adr = " + element.adr,
@@ -129,13 +163,56 @@ class MediolaGateway extends utils.Adapter {
     // {XC_EVT}{"type":"SV","data":"I:02:00000007"}
     // {XC_EVT}{"type":"SV","data":"F:03:432"}
     // {XC_EVT}{"type":"SV","data":"S:04:abcdefghij"}
-    // getstates
+    // getstates Mediola
     // http://ipaddress/command?XC_FNC=getstates
     // {XC_SUC}[
     //    {"type":"ONOFF","adr":"01","state":"on"},
     //    {"type":"INT","adr":"02","state":"00000007"},
     //    {"type":"FLOAT","adr":"03","state":"31323334"},
     //    {"type":"STRING","adr":"04","state":"abcdefghij"}]
+    // getstates WIR
+    // {XC_SUC}[
+    //      {"type":"EVENT","adr":"FF","state":"0"},
+    //      {"type":"WR","sid":"01","adr":"132D6C01","config":"F000050528:1:7340:6B53","state":"013300","deviceType":"01"},
+    //      {"type":"WR","sid":"01","adr":"xaaaaaax","config":"F000050528:1:7340:6B53","state":"013300","deviceType":"01"},
+    //      {"type":"WR","sid":"02","adr":"xaaaaaax","config":"DB00054B28:1:71CB:6B53","state":"016400","deviceType":"01"},
+    //      {"type":"WR","sid":"03","adr":"xaaaaaax","config":"D500053528:1:741F:6B53","state":"016400","deviceType":"01"},
+    //      {"type":"WR","sid":"04","adr":"xaaaaaax","config":"E600046128:1:72AB:6B53","state":"013200","deviceType":"01"},
+    //      {"type":"WR","sid":"05","adr":"xaaaaaax","config":"FC0001C728:1:7401:6B53","state":"016400","deviceType":"01"},
+    //      {"type":"WR","sid":"06","adr":"xaaaaaax","config":"0200022128:1:7289:6B53","state":"016400","deviceType":"01"},
+    //      {"type":"WR","sid":"07","adr":"xaaaaaax","config":"EE0001A928:1:7286:6B53","state":"016400","deviceType":"01"},
+    //      {"type":"WR","sid":"08","adr":"xaaaaaax","config":"0100017928:1:72A3:6B53","state":"016400","deviceType":"01"},
+    //      {"type":"WR","sid":"09","adr":"xaaaaaax","config":"1F00017728:1:7272:6B53","state":"016400","deviceType":"01"}]
+    // /info?at=46b385e0a2d610044569ff7a031324a9
+    // {"XC_SUC":
+    //  {   "name":"WIR-CONNECT V6",
+    //      "mhv":"XN II",
+    //      "mfv":"1.2.10-3896c366",
+    //      "msv":"1.16.0",
+    //      "hwv":"C3",
+    //      "vid":"000A",
+    //      "mem":200000,
+    //      "ip":"xxx.xxx.xxx.xxx",
+    //      "sn":"xxx.xxx.xxx.xxx",
+    //      "gw":"xxx.xxx.xxx.xxx",
+    //      "dns":"xxx.xxx.xxx.xxx",
+    //      "mac":"40-66-7a-00-86-d4",
+    //      "ntp":"xxx.xxx.xxx.xxx",
+    //      "start":1680028537,
+    //      "time":1689705023,
+    //      "loc":"21020D0087",
+    //      "serial":"230400,8N1",
+    //      "io":"AA-E0",
+    //      "cfg":"BF",
+    //      "server":"ccs.wir-elektronik-cloud.de:80",
+    //      "locked":false,
+    //      "sid":"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+    //      "wifi":"HITCS_mobile",
+    //      "rssi":-60}}
+    // set rollo
+    // /cmd?XC_FNC=SendSC&type=WR&data=01xaaaaaax0101&at=46b385e0a2d610044569ff7a031324a9 up
+    // /cmd?XC_FNC=SendSC&type=WR&data=01xaaaaaax0102&at=46b385e0a2d610044569ff7a031324a9 down
+    // /cmd?XC_FNC=SendSC&type=WR&data=01xaaaaaax0103&at=46b385e0a2d610044569ff7a031324a9 stop
     /**
      * Is called when databases are connected and adapter received configuration.
      */
@@ -191,8 +268,13 @@ class MediolaGateway extends utils.Adapter {
                                 // never reached yet, because invalid json chars in floats
                                 this.setState("id" + index, { val: value, ack: true });
                             } else {
-                                this.log.debug("data type not known");
+                                this.log.debug("sys var type not known: " + jsonData.data);
                             }
+                        } else if (jsonData.type === "WR") {
+                            this.log.debug(JSON.stringify(jsonData));
+                        } else {
+                            this.log.debug("data type not known: " + jsonData.type);
+                            this.log.debug(JSON.stringify(jsonData));
                         }
                     } else {
                         this.log.error("json format not known:" + message);
@@ -337,7 +419,7 @@ class MediolaGateway extends utils.Adapter {
                 if (id.endsWith("sendIrData")) {
                     this.log.debug("try send: " + state.val);
                     if (validMediolaFound) {
-                        let reqUrl = "http://" + foundIpAddress + "/command?XC_FNC=Send2&code=" + state.val;
+                        let reqUrl = this.genURL + "XC_FNC=Send2&code=" + state.val;
                         reqUrl = encodeURI(reqUrl);
                         this.log.debug("url request to mediola: " + reqUrl);
                         axios
@@ -356,7 +438,7 @@ class MediolaGateway extends utils.Adapter {
                 } else if (id.endsWith("sendRfData")) {
                     this.log.debug("try send: " + state.val);
                     if (validMediolaFound) {
-                        let reqUrl = "http://" + foundIpAddress + "/command?XC_FNC=Send2&ir=00&rf=01&code=" + state.val;
+                        let reqUrl = this.genURL + "XC_FNC=Send2&ir=00&rf=01&code=" + state.val;
                         reqUrl = encodeURI(reqUrl);
                         this.log.debug("url request to mediola: " + reqUrl);
                         axios

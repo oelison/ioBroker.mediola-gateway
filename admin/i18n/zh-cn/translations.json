@@ -12,5 +12,7 @@
     "ip": "IP地址",
     "helpIp": "例如123.234.12.45",
     "password": "密码",
-    "helpPassword": "Mediola登录密码"
+    "helpPassword": "Mediola登录密码",
+    "username": "用户名",
+    "helpUsername": "梅迪奥拉登录名"
 }

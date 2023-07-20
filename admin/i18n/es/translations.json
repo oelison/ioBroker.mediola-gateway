@@ -12,5 +12,7 @@
     "ip": "dirección IP",
     "helpIp": "p.ej. 123.234.12.45",
     "password": "Contraseña",
-    "helpPassword": "Contraseña de inicio de sesión de Mediola"
+    "helpPassword": "Contraseña de inicio de sesión de Mediola",
+    "username": "nombre de usuario",
+    "helpUsername": "Nombre de inicio de sesión de Mediola"
 }
