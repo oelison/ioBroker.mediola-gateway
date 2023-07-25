@@ -88,7 +88,7 @@ class MediolaGateway extends utils.Adapter {
                       if (element.adr.length != 8) {
                         this.log.error("this WR element has not 8 chars: " + element.adr);
                       }
-                      description = "WIR " + element.adr;
+                      description = "WIR " + element.adr + " 1=up, 2=down, 3=stop";
                       writable = true;
                       objState = "0";
                     } else if (element.type === "BK") {
