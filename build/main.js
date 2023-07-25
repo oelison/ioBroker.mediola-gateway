@@ -67,7 +67,6 @@ class MediolaGateway extends utils.Adapter {
       sysvarInit = true;
       let reqUrl = this.genURL() + "XC_FNC=getstates";
       reqUrl = encodeURI(reqUrl);
-      this.log.debug("url request to mediola: " + reqUrl);
       import_axios.default.get(reqUrl).then((res) => {
         this.log.debug(res.data);
         if (res.data.startsWith("{XC_SUC}")) {
@@ -86,6 +85,9 @@ class MediolaGateway extends utils.Adapter {
                     let objState = "";
                     if (element.type === "WR") {
                       objName = element.type + element.adr;
+                      if (element.adr.length != 8) {
+                        this.log.error("this WR element has not 8 chars: " + element.adr);
+                      }
                       description = "WIR " + element.adr;
                       writable = true;
                       objState = "0";
@@ -181,6 +183,7 @@ class MediolaGateway extends utils.Adapter {
               }
             } else if (jsonData.type === "WR") {
               this.log.debug(JSON.stringify(jsonData));
+            } else if (jsonData.type === "HM") {
             } else {
               this.log.debug("data type not known: " + jsonData.type);
               this.log.debug(JSON.stringify(jsonData));
@@ -292,6 +295,8 @@ class MediolaGateway extends utils.Adapter {
     });
     this.subscribeStates("sendIrData");
     this.subscribeStates("sendRfData");
+    this.subscribeStates("id*");
+    this.subscribeStates("WR*");
   }
   onUnload(callback) {
     try {
@@ -306,12 +311,16 @@ class MediolaGateway extends utils.Adapter {
     if (state) {
       this.log.info(`state ${id} changed: ${state.val} (ack = ${state.ack})`);
       if (state.ack === false) {
-        if (id.endsWith("sendIrData")) {
+        const dataNameParts = id.split(".");
+        let dataName = "";
+        if (dataNameParts.length === 3) {
+          dataName = dataNameParts[2];
+        }
+        if (dataName === "sendIrData") {
           this.log.debug("try send: " + state.val);
           if (validMediolaFound) {
-            let reqUrl = this.genURL + "XC_FNC=Send2&code=" + state.val;
+            let reqUrl = this.genURL() + "XC_FNC=Send2&code=" + state.val;
             reqUrl = encodeURI(reqUrl);
-            this.log.debug("url request to mediola: " + reqUrl);
             import_axios.default.get(reqUrl).then((res) => {
               this.log.debug(res.data);
               if (res.data != "{XC_SUC}") {
@@ -322,12 +331,11 @@ class MediolaGateway extends utils.Adapter {
               this.log.error(error);
             });
           }
-        } else if (id.endsWith("sendRfData")) {
+        } else if (dataName === "sendRfData") {
           this.log.debug("try send: " + state.val);
           if (validMediolaFound) {
-            let reqUrl = this.genURL + "XC_FNC=Send2&ir=00&rf=01&code=" + state.val;
+            let reqUrl = this.genURL() + "XC_FNC=Send2&ir=00&rf=01&code=" + state.val;
             reqUrl = encodeURI(reqUrl);
-            this.log.debug("url request to mediola: " + reqUrl);
             import_axios.default.get(reqUrl).then((res) => {
               this.log.debug(res.data);
               if (res.data != "{XC_SUC}") {
@@ -338,6 +346,35 @@ class MediolaGateway extends utils.Adapter {
               this.log.error(error);
             });
           }
+        } else if (dataName.startsWith("id")) {
+          this.log.debug("got known event: " + id + " " + JSON.stringify(state));
+        } else if (dataName.startsWith("WR")) {
+          const wrId = dataName.replace("WR", "");
+          let direction = "03";
+          if (state.val === "1") {
+            direction = "01";
+          } else if (state.val == 2) {
+            direction = "02";
+          } else if (state.val == 3) {
+            direction = "03";
+          } else {
+            this.log.error("only 1 (up), 2 (down) or 3 (stop) is allowed. For safety do a stop");
+          }
+          if (validMediolaFound) {
+            let reqUrl = this.genURL() + "XC_FNC=SendSC&type=WR&data=01" + wrId + "01" + direction + "&at=46b385e0a2d610044569ff7a031324a9";
+            reqUrl = encodeURI(reqUrl);
+            import_axios.default.get(reqUrl).then((res) => {
+              this.log.debug(res.data);
+              if (res.data != "{XC_SUC}") {
+                this.log.error("mediola device rejected the command: " + state.val);
+              }
+            }).catch((error) => {
+              this.log.error("mediola device not reached by sending SC data");
+              this.log.error(error);
+            });
+          }
+        } else {
+          this.log.debug("got unknown event: " + JSON.stringify(state));
         }
       }
     } else {
