@@ -110,6 +110,14 @@ class MediolaGateway extends utils.Adapter {
                                                 description = "WIR " + element.adr;
                                                 writable = true;
                                                 objState = "0";
+                                            } else if (element.type === "BK") {
+                                                objName = element.type + element.adr;
+                                                if (element.adr.length != 6) {
+                                                    this.log.error("this BK element has not 6 chars: " + element.adr);
+                                                }
+                                                description = "Nobily " + element.adr;
+                                                writable = true;
+                                                objState = "0";
                                             } else {
                                                 objName = "id" + element.adr;
                                                 description = "sysvar" + element.adr;
@@ -172,6 +180,9 @@ class MediolaGateway extends utils.Adapter {
     //    {"type":"INT","adr":"02","state":"00000007"},
     //    {"type":"FLOAT","adr":"03","state":"31323334"},
     //    {"type":"STRING","adr":"04","state":"abcdefghij"}]
+    // getstates Nobily
+    // {XC_SUC}[
+    //    {"type":"BK","sid":"01","adr":"123456","config":"","state":""}]
     // getstates WIR
     // {XC_SUC}[
     //      {"type":"EVENT","adr":"FF","state":"0"},

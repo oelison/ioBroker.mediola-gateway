@@ -91,6 +91,14 @@ class MediolaGateway extends utils.Adapter {
                       description = "WIR " + element.adr;
                       writable = true;
                       objState = "0";
+                    } else if (element.type === "BK") {
+                      objName = element.type + element.adr;
+                      if (element.adr.length != 6) {
+                        this.log.error("this BK element has not 6 chars: " + element.adr);
+                      }
+                      description = "Nobily " + element.adr;
+                      writable = true;
+                      objState = "0";
                     } else {
                       objName = "id" + element.adr;
                       description = "sysvar" + element.adr;
