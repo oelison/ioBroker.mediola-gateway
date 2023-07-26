@@ -493,9 +493,10 @@ class MediolaGateway extends utils.Adapter {
                             .get(reqUrl)
                             .then((res) => {
                                 this.log.debug(res.data);
-                                if (res.data.toString().include("XC_SUC")) {
+                                const retVal: string = res.data.toString();
+                                if (retVal.includes("XC_SUC") === false) {
                                     this.log.error(
-                                        "mediola device rejected the command: " + state.val + " response: " + res.data,
+                                        "mediola device rejectedx the command: " + state.val + " response: " + res.data,
                                     );
                                 }
                             })
