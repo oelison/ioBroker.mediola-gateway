@@ -86,7 +86,7 @@ class MediolaGateway extends utils.Adapter {
                 .get(reqUrl)
                 .then((res) => {
                     this.log.debug(res.data);
-                    if (res.data.startsWith("{XC_SUC}")) {
+                    if (res.data.toString().startsWith("{XC_SUC}")) {
                         this.log.debug("mediola device found data: " + res.data);
                         try {
                             const jsonData = JSON.parse(res.data.substring(8));
@@ -303,7 +303,7 @@ class MediolaGateway extends utils.Adapter {
                 let macAddress = "";
                 let mediolaFound = false;
                 for (const dataLine of dataLines) {
-                    this.log.info(dataLine);
+                    this.log.debug(dataLine);
                     if (dataLine.startsWith("IP:")) {
                         ipAddress = dataLine.substring(3);
                     }
@@ -422,7 +422,7 @@ class MediolaGateway extends utils.Adapter {
     private onStateChange(id: string, state: ioBroker.State | null | undefined): void {
         if (state) {
             // The state was changed
-            this.log.info(`state ${id} changed: ${state.val} (ack = ${state.ack})`);
+            this.log.debug(`state ${id} changed: ${state.val} (ack = ${state.ack})`);
             // This is ioBroker convention, only send commands if ack = false
             if (state.ack === false) {
                 const dataNameParts = id.split(".");
@@ -493,8 +493,10 @@ class MediolaGateway extends utils.Adapter {
                             .get(reqUrl)
                             .then((res) => {
                                 this.log.debug(res.data);
-                                if (res.data != "{XC_SUC}") {
-                                    this.log.error("mediola device rejected the command: " + state.val);
+                                if (res.data.toString().include("XC_SUC")) {
+                                    this.log.error(
+                                        "mediola device rejected the command: " + state.val + " response: " + res.data,
+                                    );
                                 }
                             })
                             .catch((error) => {
@@ -508,7 +510,7 @@ class MediolaGateway extends utils.Adapter {
             }
         } else {
             // The state was deleted
-            this.log.info(`state ${id} deleted`);
+            this.log.debug(`state ${id} deleted`);
         }
     }
 }
