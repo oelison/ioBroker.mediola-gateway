@@ -14,5 +14,9 @@
     "password": "Contraseña",
     "helpPassword": "Contraseña de inicio de sesión de Mediola",
     "username": "nombre de usuario",
-    "helpUsername": "Nombre de inicio de sesión de Mediola"
+    "helpUsername": "Nombre de inicio de sesión de Mediola",
+    "pullData": "leer el estado de Mediola",
+    "helpPullData": "Usar solo cuando no se reciben eventos.",
+    "pullDataInterval": "intervalo de tiempo para extracción en minutos",
+    "helpPullDataInterval": "Con qué frecuencia se genera la solicitud a la mediola."
 }

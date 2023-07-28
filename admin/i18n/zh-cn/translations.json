@@ -14,5 +14,9 @@
     "password": "密码",
     "helpPassword": "Mediola登录密码",
     "username": "用户名",
-    "helpUsername": "梅迪奥拉登录名"
+    "helpUsername": "梅迪奥拉登录名",
+    "pullData": "从 Mediola 读取状态",
+    "helpPullData": "仅当未收到事件时使用。",
+    "pullDataInterval": "拉动时间跨度（分钟）",
+    "helpPullDataInterval": "向 mediola 发出请求的频率。"
 }

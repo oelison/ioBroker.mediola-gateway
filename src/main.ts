@@ -14,6 +14,7 @@ let foundMacAddress = "";
 let foundIpAddress = "";
 let validMediolaFound = false;
 let sysvarInit = false;
+let pullDataTimer: ioBroker.Timeout | null = null;
 
 // links of interest:
 // https://github.com/ioBroker/AdapterRequests/issues/47 (main adapter request)
@@ -77,8 +78,11 @@ class MediolaGateway extends utils.Adapter {
      * Is called when valid mediola found
      * read all existing SysVars
      */
-    private async readAllSystemVars(): Promise<void> {
-        if (validMediolaFound && !sysvarInit) {
+    private async readAllSystemVars(timerRead: boolean): Promise<void> {
+        this.log.debug(
+            "validMediola: " + validMediolaFound + " sysvarInti: " + sysvarInit + " timerRead: " + timerRead,
+        );
+        if ((validMediolaFound && !sysvarInit) || timerRead) {
             sysvarInit = true;
             let reqUrl = this.genURL() + "XC_FNC=getstates";
             reqUrl = encodeURI(reqUrl);
@@ -157,6 +161,33 @@ class MediolaGateway extends utils.Adapter {
                     this.log.error("mediola device not reached by getting sys vars");
                     this.log.error(error);
                 });
+        } else {
+            this.log.debug("recalled with no effect");
+        }
+    }
+    private async refreshStates(source: string): Promise<void> {
+        this.log.debug("Source: " + source);
+        // stop timer
+        if (pullDataTimer != null) {
+            this.log.debug("timer cleared by: " + source);
+            this.clearTimeout(pullDataTimer);
+        }
+        if (this.config.pullData === true) {
+            // suppress on init call
+            if (source !== "onReady") {
+                this.readAllSystemVars(true);
+            }
+            // start timer
+            if (validMediolaFound) {
+                let pullInterval = this.config.pullDataInterval;
+                if (pullInterval < 1) {
+                    pullInterval = 1;
+                }
+                pullDataTimer = this.setTimeout(() => {
+                    pullDataTimer = null;
+                    this.refreshStates("timeout (default)");
+                }, this.config.pullDataInterval * 60000);
+            }
         }
     }
     // lern call
@@ -353,7 +384,8 @@ class MediolaGateway extends utils.Adapter {
                         }
                     }
                     if (validMediolaFound === true) {
-                        this.readAllSystemVars();
+                        this.readAllSystemVars(false);
+                        this.refreshStates("onReady");
                     }
                 } else {
                     this.log.error("unkown device on this port");
@@ -439,7 +471,7 @@ class MediolaGateway extends utils.Adapter {
                             .get(reqUrl)
                             .then((res) => {
                                 this.log.debug(res.data);
-                                if (res.data != "{XC_SUC}") {
+                                if (res.data.toString().includes("XC_SUC") === false) {
                                     this.log.error("mediola device rejected the command: " + state.val);
                                 }
                             })
@@ -457,7 +489,7 @@ class MediolaGateway extends utils.Adapter {
                             .get(reqUrl)
                             .then((res) => {
                                 this.log.debug(res.data);
-                                if (res.data != "{XC_SUC}") {
+                                if (res.data.toString().includes("XC_SUC") === false) {
                                     this.log.error("mediola device rejected the command: " + state.val);
                                 }
                             })
@@ -493,8 +525,7 @@ class MediolaGateway extends utils.Adapter {
                             .get(reqUrl)
                             .then((res) => {
                                 this.log.debug(res.data);
-                                const retVal: string = res.data.toString();
-                                if (retVal.includes("XC_SUC") === false) {
+                                if (res.data.toString().includes("XC_SUC") === false) {
                                     this.log.error(
                                         "mediola device rejectedx the command: " + state.val + " response: " + res.data,
                                     );

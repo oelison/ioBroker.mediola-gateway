@@ -11,6 +11,8 @@ declare global {
             ip: string;
             username: string;
             password: string;
+            pullData: boolean;
+            pullDataInterval: number;
         }
     }
 }

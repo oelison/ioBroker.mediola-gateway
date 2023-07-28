@@ -156,7 +156,8 @@
         "findByIp": false,
         "ip": "192.168.0.1",
         "username": "",
-        "password": ""
+        "password": "",
+        "pullData": false
     },
     "objects": [],
     "instanceObjects": [

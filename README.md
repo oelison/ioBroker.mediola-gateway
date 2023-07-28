@@ -36,7 +36,8 @@ DISCLAIMER All product and company names or logos are Trademarks™ or Registere
 ### **WORK IN PROGRESS**
 
 -   user and password login to mediola
--   WIR system added
+-   WIR system added (Thanks to Keulehd)
+-   pull data added for not pushed states
 
 ### 0.1.4 (2023-05-20)
 

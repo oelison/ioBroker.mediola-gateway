@@ -14,5 +14,9 @@
     "password": "Passwort",
     "helpPassword": "Mediola-Login-Passwort",
     "username": "Nutzername",
-    "helpUsername": "Mediola-Anmeldename"
+    "helpUsername": "Mediola-Anmeldename",
+    "pullData": "Status von Mediola lesen",
+    "helpPullData": "Nur verwenden, wenn keine Ereignisse empfangen werden.",
+    "pullDataInterval": "Zeitspanne für Pull in Minuten",
+    "helpPullDataInterval": "Wie oft die Anfrage an die Mediola generiert wird."
 }

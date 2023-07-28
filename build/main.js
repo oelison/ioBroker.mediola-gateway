@@ -29,6 +29,7 @@ let foundMacAddress = "";
 let foundIpAddress = "";
 let validMediolaFound = false;
 let sysvarInit = false;
+let pullDataTimer = null;
 function isMediolaEvt(o) {
   return "type" in o && "data" in o;
 }
@@ -62,8 +63,11 @@ class MediolaGateway extends utils.Adapter {
     }
     return retVal;
   }
-  async readAllSystemVars() {
-    if (validMediolaFound && !sysvarInit) {
+  async readAllSystemVars(timerRead) {
+    this.log.debug(
+      "validMediola: " + validMediolaFound + " sysvarInti: " + sysvarInit + " timerRead: " + timerRead
+    );
+    if (validMediolaFound && !sysvarInit || timerRead) {
       sysvarInit = true;
       let reqUrl = this.genURL() + "XC_FNC=getstates";
       reqUrl = encodeURI(reqUrl);
@@ -137,6 +141,30 @@ class MediolaGateway extends utils.Adapter {
         this.log.error("mediola device not reached by getting sys vars");
         this.log.error(error);
       });
+    } else {
+      this.log.debug("recalled with no effect");
+    }
+  }
+  async refreshStates(source) {
+    this.log.debug("Source: " + source);
+    if (pullDataTimer != null) {
+      this.log.debug("timer cleared by: " + source);
+      this.clearTimeout(pullDataTimer);
+    }
+    if (this.config.pullData === true) {
+      if (source !== "onReady") {
+        this.readAllSystemVars(true);
+      }
+      if (validMediolaFound) {
+        let pullInterval = this.config.pullDataInterval;
+        if (pullInterval < 1) {
+          pullInterval = 1;
+        }
+        pullDataTimer = this.setTimeout(() => {
+          pullDataTimer = null;
+          this.refreshStates("timeout (default)");
+        }, this.config.pullDataInterval * 6e4);
+      }
     }
   }
   async onReady() {
@@ -258,7 +286,8 @@ class MediolaGateway extends utils.Adapter {
             }
           }
           if (validMediolaFound === true) {
-            this.readAllSystemVars();
+            this.readAllSystemVars(false);
+            this.refreshStates("onReady");
           }
         } else {
           this.log.error("unkown device on this port");
@@ -331,7 +360,7 @@ class MediolaGateway extends utils.Adapter {
             reqUrl = encodeURI(reqUrl);
             import_axios.default.get(reqUrl).then((res) => {
               this.log.debug(res.data);
-              if (res.data != "{XC_SUC}") {
+              if (res.data.toString().includes("XC_SUC") === false) {
                 this.log.error("mediola device rejected the command: " + state.val);
               }
             }).catch((error) => {
@@ -346,7 +375,7 @@ class MediolaGateway extends utils.Adapter {
             reqUrl = encodeURI(reqUrl);
             import_axios.default.get(reqUrl).then((res) => {
               this.log.debug(res.data);
-              if (res.data != "{XC_SUC}") {
+              if (res.data.toString().includes("XC_SUC") === false) {
                 this.log.error("mediola device rejected the command: " + state.val);
               }
             }).catch((error) => {
@@ -373,8 +402,7 @@ class MediolaGateway extends utils.Adapter {
             reqUrl = encodeURI(reqUrl);
             import_axios.default.get(reqUrl).then((res) => {
               this.log.debug(res.data);
-              const retVal = res.data.toString();
-              if (retVal.includes("XC_SUC") === false) {
+              if (res.data.toString().includes("XC_SUC") === false) {
                 this.log.error(
                   "mediola device rejectedx the command: " + state.val + " response: " + res.data
                 );
