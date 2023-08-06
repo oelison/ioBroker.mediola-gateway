@@ -12,5 +12,11 @@
     "ip": "endereço de IP",
     "helpIp": "por exemplo. 123.234.12.45",
     "password": "Senha",
-    "helpPassword": "Senha de acesso Mediola"
+    "helpPassword": "Senha de acesso Mediola",
+    "username": "nome de usuário",
+    "helpUsername": "nome de login Mediola",
+    "pullData": "ler status de Mediola",
+    "helpPullData": "Use somente quando os eventos não forem recebidos.",
+    "pullDataInterval": "intervalo de tempo para puxar em minutos",
+    "helpPullDataInterval": "Com que frequência a solicitação para a mediola é gerada."
 }

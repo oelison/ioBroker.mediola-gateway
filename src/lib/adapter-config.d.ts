@@ -9,7 +9,10 @@ declare global {
             mac: string;
             findByIp: boolean;
             ip: string;
+            username: string;
             password: string;
+            pullData: boolean;
+            pullDataInterval: number;
         }
     }
 }

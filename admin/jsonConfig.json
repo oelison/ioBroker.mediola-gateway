@@ -48,6 +48,14 @@
                     "label": "ip",
                     "help": "helpIp"
                 },
+                "username": {
+                    "type": "text",
+                    "sm": 12,
+                    "md": 6,
+                    "lg": 6,
+                    "label": "username",
+                    "help": "helpUsername"
+                },
                 "password": {
                     "type": "password",
                     "sm": 12,
@@ -55,6 +63,23 @@
                     "lg": 6,
                     "label": "password",
                     "help": "helpPassword"
+                },
+                "pullData": {
+                    "newLine": true,
+                    "type": "checkbox",
+                    "sm": 12,
+                    "md": 6,
+                    "lg": 6,
+                    "label": "pullData",
+                    "help": "helpPullData"
+                },
+                "pullDataInterval": {
+                    "type": "number",
+                    "sm": 12,
+                    "md": 6,
+                    "lg": 6,
+                    "label": "pullDataInterval",
+                    "help": "helpPullDataInterval"
                 }
             }
         }

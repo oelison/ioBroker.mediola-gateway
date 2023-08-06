@@ -12,5 +12,11 @@
     "ip": "adres IP",
     "helpIp": "np. 123.234.12.45",
     "password": "Hasło",
-    "helpPassword": "Hasło logowania Medioli"
+    "helpPassword": "Hasło logowania Medioli",
+    "username": "nazwa użytkownika",
+    "helpUsername": "Login firmy Mediola",
+    "pullData": "przeczytaj status z Medioli",
+    "helpPullData": "Używaj tylko wtedy, gdy zdarzenia nie są odbierane.",
+    "pullDataInterval": "przedział czasowy dla pociągnięcia w minutach",
+    "helpPullDataInterval": "Jak często generowane jest żądanie do medioli."
 }

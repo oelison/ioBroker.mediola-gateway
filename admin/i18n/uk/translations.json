@@ -12,5 +12,11 @@
     "ip": "IP-адреса",
     "helpIp": "напр. 123.234.12.45",
     "password": "Пароль",
-    "helpPassword": "Пароль для входу в Mediola"
+    "helpPassword": "Пароль для входу в Mediola",
+    "username": "ім'я користувача",
+    "helpUsername": "Ім'я для входу в Mediola",
+    "pullData": "читати статус від Mediola",
+    "helpPullData": "Використовуйте лише тоді, коли події не отримано.",
+    "pullDataInterval": "проміжок часу для витягування в хвилинах",
+    "helpPullDataInterval": "Як часто генерується запит до медіоли."
 }

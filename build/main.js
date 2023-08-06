@@ -29,6 +29,7 @@ let foundMacAddress = "";
 let foundIpAddress = "";
 let validMediolaFound = false;
 let sysvarInit = false;
+let pullDataTimer = null;
 function isMediolaEvt(o) {
   return "type" in o && "data" in o;
 }
@@ -53,15 +54,26 @@ class MediolaGateway extends utils.Adapter {
       return false;
     }
   }
-  async readAllSystemVars() {
-    if (validMediolaFound && !sysvarInit) {
+  genURL() {
+    let retVal = "";
+    if (this.config.username === "") {
+      retVal = "http://" + foundIpAddress + "/command?";
+    } else {
+      retVal = "http://" + foundIpAddress + "/command?XC_USER=" + this.config.username + "&XC_PASS=" + this.config.password + "&";
+    }
+    return retVal;
+  }
+  async readAllSystemVars(timerRead) {
+    this.log.debug(
+      "validMediola: " + validMediolaFound + " sysvarInti: " + sysvarInit + " timerRead: " + timerRead
+    );
+    if (validMediolaFound && !sysvarInit || timerRead) {
       sysvarInit = true;
-      let reqUrl = "http://" + foundIpAddress + "/command?XC_FNC=getstates";
+      let reqUrl = this.genURL() + "XC_FNC=getstates";
       reqUrl = encodeURI(reqUrl);
-      this.log.debug("url request to mediola: " + reqUrl);
       import_axios.default.get(reqUrl).then((res) => {
         this.log.debug(res.data);
-        if (res.data.startsWith("{XC_SUC}")) {
+        if (res.data.toString().startsWith("{XC_SUC}")) {
           this.log.debug("mediola device found data: " + res.data);
           try {
             const jsonData = JSON.parse(res.data.substring(8));
@@ -71,18 +83,83 @@ class MediolaGateway extends utils.Adapter {
                   const element = jsonData[index];
                   this.log.debug(JSON.stringify(element));
                   if (this.validName(element.adr)) {
-                    this.setObjectNotExists("id" + element.adr, {
-                      type: "state",
-                      common: {
-                        name: "sysvar" + element.adr,
-                        type: "string",
-                        role: "text",
-                        read: true,
-                        write: false
-                      },
-                      native: {}
-                    });
-                    this.setState("id" + element.adr, { val: element.state, ack: true });
+                    let description = "";
+                    let writable = false;
+                    let objState = "";
+                    if (element.type === "WR") {
+                      const objName = element.type + element.adr;
+                      if (element.adr.length != 8) {
+                        this.log.error("this WR element has not 8 chars: " + element.adr);
+                      }
+                      this.setObjectNotExists("state." + objName, {
+                        type: "state",
+                        common: {
+                          name: "WIR " + element.adr,
+                          type: "number",
+                          role: "text",
+                          read: true,
+                          write: false
+                        },
+                        native: {}
+                      });
+                      this.setObjectNotExists("action." + objName, {
+                        type: "state",
+                        common: {
+                          name: "WIR " + element.adr + " 1=up, 2=down, 3=stop",
+                          type: "string",
+                          role: "text",
+                          read: true,
+                          write: true
+                        },
+                        native: {}
+                      });
+                      if (element.state.length === 6) {
+                        const hexVal = element.state.substring(2, 4);
+                        const dezVal = parseInt(hexVal, 16);
+                        this.setState("state." + objName, { val: dezVal, ack: true });
+                      } else {
+                        this.log.error(
+                          "state length not 6 element.state: " + element.state
+                        );
+                        this.setState("state." + objName, { val: 0, ack: true });
+                      }
+                    } else if (element.type === "BK") {
+                      const objName = "state." + element.type + element.adr;
+                      if (element.adr.length != 6) {
+                        this.log.error("this BK element has not 6 chars: " + element.adr);
+                      }
+                      description = "Nobily " + element.adr;
+                      writable = false;
+                      objState = element.state;
+                      this.setObjectNotExists(objName, {
+                        type: "state",
+                        common: {
+                          name: description,
+                          type: "string",
+                          role: "text",
+                          read: true,
+                          write: writable
+                        },
+                        native: {}
+                      });
+                      this.setState(objName, { val: objState, ack: true });
+                    } else {
+                      const objName = "sysvars.id" + element.adr;
+                      description = "sysvar" + element.adr;
+                      objState = element.state;
+                      this.setObjectNotExists(objName, {
+                        type: "state",
+                        common: {
+                          name: description,
+                          type: "string",
+                          role: "text",
+                          read: true,
+                          write: writable
+                        },
+                        native: {}
+                      });
+                      this.setState(objName, { val: objState, ack: true });
+                    }
                   } else {
                     this.log.error(
                       "invalid sys var name from mediola device element.adr = " + element.adr
@@ -104,6 +181,30 @@ class MediolaGateway extends utils.Adapter {
         this.log.error("mediola device not reached by getting sys vars");
         this.log.error(error);
       });
+    } else {
+      this.log.debug("recalled with no effect");
+    }
+  }
+  async refreshStates(source) {
+    this.log.debug("Source: " + source);
+    if (pullDataTimer != null) {
+      this.log.debug("timer cleared by: " + source);
+      this.clearTimeout(pullDataTimer);
+    }
+    if (this.config.pullData === true) {
+      if (source !== "onReady") {
+        this.readAllSystemVars(true);
+      }
+      if (validMediolaFound) {
+        let pullInterval = this.config.pullDataInterval;
+        if (pullInterval < 1) {
+          pullInterval = 1;
+        }
+        pullDataTimer = this.setTimeout(() => {
+          pullDataTimer = null;
+          this.refreshStates("timeout (default)");
+        }, this.config.pullDataInterval * 6e4);
+      }
     }
   }
   async onReady() {
@@ -154,8 +255,14 @@ class MediolaGateway extends utils.Adapter {
               } else if (data.startsWith("F:")) {
                 this.setState("id" + index, { val: value, ack: true });
               } else {
-                this.log.debug("data type not known");
+                this.log.debug("sys var type not known: " + jsonData.data);
               }
+            } else if (jsonData.type === "WR") {
+              this.log.debug(JSON.stringify(jsonData));
+            } else if (jsonData.type === "HM") {
+            } else {
+              this.log.debug("data type not known: " + jsonData.type);
+              this.log.debug(JSON.stringify(jsonData));
             }
           } else {
             this.log.error("json format not known:" + message);
@@ -177,6 +284,7 @@ class MediolaGateway extends utils.Adapter {
         let macAddress = "";
         let mediolaFound = false;
         for (const dataLine of dataLines) {
+          this.log.debug(dataLine);
           if (dataLine.startsWith("IP:")) {
             ipAddress = dataLine.substring(3);
           }
@@ -184,6 +292,9 @@ class MediolaGateway extends utils.Adapter {
             macAddress = dataLine.substring(4);
           }
           if (dataLine.startsWith("NAME:AIO GATEWAY")) {
+            mediolaFound = true;
+          }
+          if (dataLine.startsWith("NAME:WIR-CONNECT V6")) {
             mediolaFound = true;
           }
         }
@@ -215,7 +326,8 @@ class MediolaGateway extends utils.Adapter {
             }
           }
           if (validMediolaFound === true) {
-            this.readAllSystemVars();
+            this.readAllSystemVars(false);
+            this.refreshStates("onReady");
           }
         } else {
           this.log.error("unkown device on this port");
@@ -260,6 +372,8 @@ class MediolaGateway extends utils.Adapter {
     });
     this.subscribeStates("sendIrData");
     this.subscribeStates("sendRfData");
+    this.subscribeStates("sysvars.id*");
+    this.subscribeStates("action.WR*");
   }
   onUnload(callback) {
     try {
@@ -272,17 +386,25 @@ class MediolaGateway extends utils.Adapter {
   }
   onStateChange(id, state) {
     if (state) {
-      this.log.info(`state ${id} changed: ${state.val} (ack = ${state.ack})`);
+      this.log.debug(`state ${id} changed: ${state.val} (ack = ${state.ack})`);
       if (state.ack === false) {
-        if (id.endsWith("sendIrData")) {
+        const dataNameParts = id.split(".");
+        let dataName = "";
+        let subfolder = "";
+        if (dataNameParts.length === 4) {
+          subfolder = dataNameParts[2];
+          dataName = dataNameParts[3];
+        } else if (dataNameParts.length === 3) {
+          dataName = dataNameParts[2];
+        }
+        if (dataName === "sendIrData") {
           this.log.debug("try send: " + state.val);
           if (validMediolaFound) {
-            let reqUrl = "http://" + foundIpAddress + "/command?XC_FNC=Send2&code=" + state.val;
+            let reqUrl = this.genURL() + "XC_FNC=Send2&code=" + state.val;
             reqUrl = encodeURI(reqUrl);
-            this.log.debug("url request to mediola: " + reqUrl);
             import_axios.default.get(reqUrl).then((res) => {
               this.log.debug(res.data);
-              if (res.data != "{XC_SUC}") {
+              if (res.data.toString().includes("XC_SUC") === false) {
                 this.log.error("mediola device rejected the command: " + state.val);
               }
             }).catch((error) => {
@@ -290,15 +412,14 @@ class MediolaGateway extends utils.Adapter {
               this.log.error(error);
             });
           }
-        } else if (id.endsWith("sendRfData")) {
+        } else if (dataName === "sendRfData") {
           this.log.debug("try send: " + state.val);
           if (validMediolaFound) {
-            let reqUrl = "http://" + foundIpAddress + "/command?XC_FNC=Send2&ir=00&rf=01&code=" + state.val;
+            let reqUrl = this.genURL() + "XC_FNC=Send2&ir=00&rf=01&code=" + state.val;
             reqUrl = encodeURI(reqUrl);
-            this.log.debug("url request to mediola: " + reqUrl);
             import_axios.default.get(reqUrl).then((res) => {
               this.log.debug(res.data);
-              if (res.data != "{XC_SUC}") {
+              if (res.data.toString().includes("XC_SUC") === false) {
                 this.log.error("mediola device rejected the command: " + state.val);
               }
             }).catch((error) => {
@@ -306,10 +427,48 @@ class MediolaGateway extends utils.Adapter {
               this.log.error(error);
             });
           }
+        } else if (dataName.startsWith("id")) {
+          if (subfolder === "sysvars") {
+            this.log.debug("got known event in sysvars: " + id + " " + JSON.stringify(state));
+          }
+          this.log.debug("got known event in root: " + id + " " + JSON.stringify(state));
+        } else if (dataName.startsWith("WR")) {
+          if (subfolder === "action") {
+            const wrId = dataName.replace("WR", "");
+            let direction = "03";
+            if (state.val === "1") {
+              direction = "01";
+            } else if (state.val == 2) {
+              direction = "02";
+            } else if (state.val == 3) {
+              direction = "03";
+            } else {
+              this.log.error("only 1 (up), 2 (down) or 3 (stop) is allowed. For safety do a stop");
+            }
+            if (validMediolaFound) {
+              let reqUrl = this.genURL() + "XC_FNC=SendSC&type=WR&data=01" + wrId + "01" + direction;
+              reqUrl = encodeURI(reqUrl);
+              import_axios.default.get(reqUrl).then((res) => {
+                this.log.debug(res.data);
+                if (res.data.toString().includes("XC_SUC") === false) {
+                  this.log.error(
+                    "mediola device rejected the command: " + state.val + " response: " + res.data
+                  );
+                }
+              }).catch((error) => {
+                this.log.error("mediola device not reached by sending SC data");
+                this.log.error(error);
+              });
+            }
+          } else {
+            this.log.debug("Wrong subfolder: " + subfolder + "from device: " + dataName);
+          }
+        } else {
+          this.log.debug("got unknown event: " + JSON.stringify(state));
         }
       }
     } else {
-      this.log.info(`state ${id} deleted`);
+      this.log.debug(`state ${id} deleted`);
     }
   }
 }
