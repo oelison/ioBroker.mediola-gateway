@@ -94,7 +94,7 @@ class MediolaGateway extends utils.Adapter {
                       }
                       description = "WIR " + element.adr + " 1=up, 2=down, 3=stop";
                       writable = true;
-                      objState = "0";
+                      objState = element.state;
                     } else if (element.type === "BK") {
                       objName = element.type + element.adr;
                       if (element.adr.length != 6) {
@@ -102,7 +102,7 @@ class MediolaGateway extends utils.Adapter {
                       }
                       description = "Nobily " + element.adr;
                       writable = true;
-                      objState = "0";
+                      objState = element.state;
                     } else {
                       objName = "id" + element.adr;
                       description = "sysvar" + element.adr;
