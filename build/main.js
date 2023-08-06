@@ -446,7 +446,7 @@ class MediolaGateway extends utils.Adapter {
               this.log.error("only 1 (up), 2 (down) or 3 (stop) is allowed. For safety do a stop");
             }
             if (validMediolaFound) {
-              let reqUrl = this.genURL() + "XC_FNC=SendSC&type=WR&data=01" + wrId + "01" + direction + "&at=46b385e0a2d610044569ff7a031324a9";
+              let reqUrl = this.genURL() + "XC_FNC=SendSC&type=WR&data=01" + wrId + "01" + direction;
               reqUrl = encodeURI(reqUrl);
               import_axios.default.get(reqUrl).then((res) => {
                 this.log.debug(res.data);
