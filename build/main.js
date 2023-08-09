@@ -444,17 +444,31 @@ class MediolaGateway extends utils.Adapter {
           if (subfolder === "action") {
             const wrId = dataName.replace("WR", "");
             let direction = "03";
+            let cmdType = "01";
+            let value = 0;
+            if (state.val !== null) {
+              const valueString = state.val.toString(16);
+              if (valueString.length < 3) {
+                value = parseInt(String(state.val));
+              }
+            }
             if (state.val === "1") {
               direction = "01";
-            } else if (state.val == 2) {
+            } else if (state.val === "2") {
               direction = "02";
-            } else if (state.val == 3) {
+            } else if (state.val === "3") {
               direction = "03";
+            } else if (value % 10 === 0 && value < 91 && value > 9) {
+              cmdType = "0107";
+              direction = value.toString(16);
+              direction = direction.padStart(2, "0");
             } else {
-              this.log.error("only 1 (up), 2 (down) or 3 (stop) is allowed. For safety do a stop");
+              this.log.error(
+                "only 1 (up), 2 (down) or 3 (stop) is allowed or value from 10 to 90 in 10 steps. For safety do a stop"
+              );
             }
             if (validMediolaFound) {
-              let reqUrl = this.genURL() + "XC_FNC=SendSC&type=WR&data=01" + wrId + "01" + direction;
+              let reqUrl = this.genURL() + "XC_FNC=SendSC&type=WR&data=01" + wrId + cmdType + direction;
               reqUrl = encodeURI(reqUrl);
               import_axios.default.get(reqUrl).then((res) => {
                 this.log.debug(res.data);
