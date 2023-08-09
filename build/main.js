@@ -83,8 +83,6 @@ class MediolaGateway extends utils.Adapter {
                   const element = jsonData[index];
                   this.log.debug(JSON.stringify(element));
                   if (this.validName(element.adr)) {
-                    let description = "";
-                    let writable = false;
                     let objState = "";
                     if (element.type === "WR") {
                       const objName = element.type + element.adr;
@@ -124,28 +122,36 @@ class MediolaGateway extends utils.Adapter {
                         this.setState("state." + objName, { val: 0, ack: true });
                       }
                     } else if (element.type === "BK") {
-                      const objName = "state." + element.type + element.adr;
+                      const objName = element.type + element.adr;
                       if (element.adr.length != 6) {
                         this.log.error("this BK element has not 6 chars: " + element.adr);
                       }
-                      description = "Nobily " + element.adr;
-                      writable = false;
-                      objState = element.state;
-                      this.setObjectNotExists(objName, {
+                      this.setObjectNotExists("state." + objName, {
                         type: "state",
                         common: {
-                          name: description,
+                          name: "BK " + element.adr,
                           type: "string",
                           role: "text",
                           read: true,
-                          write: writable
+                          write: false
                         },
                         native: {}
                       });
-                      this.setState(objName, { val: objState, ack: true });
+                      this.setObjectNotExists("action." + objName, {
+                        type: "state",
+                        common: {
+                          name: "BK " + element.adr + " 1=up, 2=down, 3=stop",
+                          type: "string",
+                          role: "text",
+                          read: true,
+                          write: true
+                        },
+                        native: {}
+                      });
+                      this.setState("state." + objName, { val: element.state, ack: true });
                     } else {
                       const objName = "sysvars.id" + element.adr;
-                      description = "sysvar" + element.adr;
+                      const description = "sysvar" + element.adr;
                       objState = element.state;
                       this.setObjectNotExists(objName, {
                         type: "state",
@@ -154,7 +160,7 @@ class MediolaGateway extends utils.Adapter {
                           type: "string",
                           role: "text",
                           read: true,
-                          write: writable
+                          write: false
                         },
                         native: {}
                       });
@@ -374,6 +380,8 @@ class MediolaGateway extends utils.Adapter {
     this.subscribeStates("sendRfData");
     this.subscribeStates("sysvars.id*");
     this.subscribeStates("action.WR*");
+    this.subscribeStates("action.BK*");
+    this.subscribeStates("action.NY*");
   }
   onUnload(callback) {
     try {
@@ -456,9 +464,75 @@ class MediolaGateway extends utils.Adapter {
                   );
                 }
               }).catch((error) => {
-                this.log.error("mediola device not reached by sending SC data");
+                this.log.error("mediola device not reached by sending SC data to WR");
                 this.log.error(error);
               });
+            }
+          } else {
+            this.log.debug("Wrong subfolder: " + subfolder + "from device: " + dataName);
+          }
+        } else if (dataName.startsWith("BK")) {
+          if (subfolder === "action") {
+            const bkId = dataName.replace("BK", "");
+            let direction = "02";
+            if (state.val === "1") {
+              direction = "00";
+            } else if (state.val === "2") {
+              direction = "01";
+            } else if (state.val == "3") {
+              direction = "02";
+            } else {
+              this.log.error("only 1 (up), 2 (down) or 3 (stop) is allowed. For safety do a stop");
+            }
+            if (validMediolaFound) {
+              let reqUrl = this.genURL() + "XC_FNC=SendSC&type=BK&data=0101" + bkId + direction;
+              reqUrl = encodeURI(reqUrl);
+              import_axios.default.get(reqUrl).then((res) => {
+                this.log.debug(res.data);
+                if (res.data.toString().includes("XC_SUC") === false) {
+                  this.log.error(
+                    "mediola device rejected the command: " + state.val + " response: " + res.data
+                  );
+                }
+              }).catch((error) => {
+                this.log.error("mediola device not reached by sending SC data to BK");
+                this.log.error(error);
+              });
+            }
+          } else {
+            this.log.debug("Wrong subfolder: " + subfolder + "from device: " + dataName);
+          }
+        } else if (dataName.startsWith("NY")) {
+          if (subfolder === "action") {
+            const bkId = dataName.replace("NY", "");
+            if (bkId.length === 8) {
+              let direction = "00";
+              if (state.val === "1") {
+                direction = "22";
+              } else if (state.val === "2") {
+                direction = "44";
+              } else if (state.val === "3") {
+                direction = "00";
+              } else {
+                this.log.error("only 1 (up), 2 (down) or 3 (stop) is allowed. For safety do a stop");
+              }
+              if (validMediolaFound) {
+                let reqUrl = this.genURL() + "XC_FNC=SendSC&type=NY&data=" + bkId + direction;
+                reqUrl = encodeURI(reqUrl);
+                import_axios.default.get(reqUrl).then((res) => {
+                  this.log.debug(res.data);
+                  if (res.data.toString().includes("XC_SUC") === false) {
+                    this.log.error(
+                      "mediola device rejected the command: " + state.val + " response: " + res.data
+                    );
+                  }
+                }).catch((error) => {
+                  this.log.error("mediola device not reached by sending SC data to NY");
+                  this.log.error(error);
+                });
+              }
+            } else {
+              this.log.error("NY id is not 8 chars long.");
             }
           } else {
             this.log.debug("Wrong subfolder: " + subfolder + "from device: " + dataName);

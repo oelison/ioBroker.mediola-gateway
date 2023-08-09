@@ -15,12 +15,22 @@
 
 Configuration and usage of Mediola-Gateways
 
-## usage with e.g. mediola gateway V4
+## usage with e.g. mediola gateway V4/V5/V6
 
 When you have only one Mediola Gateway (https://www.mediola.com/), auto detection is the best way to get started. In the logs the detected IP-Address and MAC-Address is after detection visible. When you have more then one Mediola Gateways, it is better to give the adapter the MAC-Address. Then this specific Gateway will be found. It is also possible to use the IP-Address, when this is not changing and better known than the MAC-Address.
 After the adapter has found the Mediola Gateway, the instance become green and the objects receivedIrData, sendIrData and sendRfData are usable. When you have sys vars in the Mediola Gateway, they will be listed also in the object list. After some time, mostly the receivedIrData is changing. This represents the received IR date in the room, where the Mediola Gateway is located.
 Every change of the sys vars will also be shown there and could be used for automation.
 The sendIrData is tested with several learned IR codes. Just putting the IR code into the object to send the data.
+
+## usage for WIR (WR) and Roto (BK) sun blinds
+
+These sun blinds will be found automatically. They start with WR or BK. There are two folders in the adapter. One is called state and the other is called action.
+In state the WR status will be shown in percent of closure. The BK state is ever empty (never seen an other value). To update the state, the flag "read status from Mediola" in the adapter instance settings need to be set. The update intervall could be adjusted in minutes.
+In the action folder, the sun blinds could be controlled. To move up a 1 need to be written, for down a 2 and 3 for a stop.
+
+## usage for Nobily (NY) sun blinds
+
+This is actually a bit complicated. The devices are not auto detected. You need to switch to the expert mode! If not existing, a folder "action" needs to be created under "mediola-gateway.0". In this folder you need to add a state "Datapoint" with type string and the name "NY12345678". "NY" need to be in capital letters and the hexadecimal number with 8 chars you need to get from the debug tool from the config tool. Take all the numbers you find under the group section.
 
 ### DISCLAIMER
 
