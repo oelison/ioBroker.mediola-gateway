@@ -26,7 +26,7 @@ The sendIrData is tested with several learned IR codes. Just putting the IR code
 
 These sun blinds will be found automatically. They start with WR or BK. There are two folders in the adapter. One is called state and the other is called action.
 In state the WR status will be shown in percent of closure. The BK state is ever empty (never seen an other value). To update the state, the flag "read status from Mediola" in the adapter instance settings need to be set. The update intervall could be adjusted in minutes.
-In the action folder, the sun blinds could be controlled. To move up a 1 need to be written, for down a 2 and 3 for a stop.
+In the action folder, the sun blinds could be controlled. To move up a 1 need to be written, for down a 2 and 3 for a stop. For WIR you could send 10, 20, 30, 40, 50, 60, 70, 80 and 90 for setting a percentage.
 
 ## usage for Nobily (NY) sun blinds
 
@@ -47,6 +47,7 @@ DISCLAIMER All product and company names or logos are Trademarks™ or Registere
 
 -   user and password login to mediola
 -   WIR system added (Thanks to Keulehd)
+-   BK and NY system added (Thanks to line)
 -   pull data added for not pushed states
 
 ### 0.1.4 (2023-05-20)
