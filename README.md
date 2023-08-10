@@ -43,12 +43,13 @@ DISCLAIMER All product and company names or logos are Trademarks™ or Registere
     ### **WORK IN PROGRESS**
 -->
 
-### **WORK IN PROGRESS**
+### 1.0.0 (2023-08-10)
 
 -   user and password login to mediola
 -   WIR system added (Thanks to Keulehd)
 -   BK and NY system added (Thanks to line)
 -   pull data added for not pushed states
+-   sysvars are now in a folder (breaking change)
 
 ### 0.1.4 (2023-05-20)
 
