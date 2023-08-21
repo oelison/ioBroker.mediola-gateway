@@ -301,7 +301,18 @@ class MediolaGateway extends utils.Adapter {
     private async onReady(): Promise<void> {
         // Reset the connection indicator during startup
         this.setState("info.connection", false, true);
-
+        this.extendObject("action", {
+            type: "folder",
+            common: {
+                name: "action",
+            },
+        });
+        this.extendObject("sysvars", {
+            type: "folder",
+            common: {
+                name: "sysvars",
+            },
+        });
         // try to find the mediola gateway with the given config
         this.log.info("auto detection: " + this.config.autoDetect);
         if (this.config.autoDetect == false) {

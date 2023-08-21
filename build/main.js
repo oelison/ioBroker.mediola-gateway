@@ -215,6 +215,18 @@ class MediolaGateway extends utils.Adapter {
   }
   async onReady() {
     this.setState("info.connection", false, true);
+    this.extendObject("action", {
+      type: "folder",
+      common: {
+        name: "action"
+      }
+    });
+    this.extendObject("sysvars", {
+      type: "folder",
+      common: {
+        name: "sysvars"
+      }
+    });
     this.log.info("auto detection: " + this.config.autoDetect);
     if (this.config.autoDetect == false) {
       this.log.info("find by mac: " + this.config.findByMac);

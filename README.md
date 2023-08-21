@@ -43,6 +43,11 @@ DISCLAIMER All product and company names or logos are Trademarks™ or Registere
     ### **WORK IN PROGRESS**
 -->
 
+### **WORK IN PROGRESS**
+
+-   folder action created as real folder
+-   folder sysvars created as real folder
+
 ### 1.0.0 (2023-08-10)
 
 -   user and password login to mediola
