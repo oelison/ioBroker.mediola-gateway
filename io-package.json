@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "mediola-gateway",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "news": {
+      "1.0.1": {
+        "en": "folder action created as real folder\nfolder sysvars created as real folder",
+        "de": "ordner aktion erstellt als realer ordner\nordner sysvars erstellt als realer ordner",
+        "ru": "действие папки создано как реальная папка\nпапка sysvars создана как настоящая папка",
+        "pt": "ação da pasta criada como pasta real\nsysvars pasta criada como pasta real",
+        "nl": "volder actie gecreëerd als echte map\nfolder sysvars gecreëerd als echte map",
+        "fr": "action de dossier créé comme vrai dossier\ndossier sysvars créé comme vrai dossier",
+        "it": "azione cartella creata come vera cartella\ncartella sysvars creato come cartella reale",
+        "es": "acción de carpeta creada como carpeta real\nsysvars carpeta creado como carpeta real",
+        "pl": "akcja folderów stworzona jako real folder\nfolder sysvars stworzony jako prawdziwy folder",
+        "uk": "дію папки, створених як реальна папка\nsysvars папки, створених як реальна папка",
+        "zh-cn": "a. 产生作为实际内容的行动\na. 制造的倍多的麻风气是实在的。"
+      },
       "1.0.0": {
         "en": "user and password login to mediola\nWIR system added (Thanks to Keulehd)\nBK and NY system added (Thanks to line)\npull data added for not pushed states",
         "de": "benutzer- und passwortanmeldung bei mediola\nWIR System hinzugefügt (Danke an Keulehd)\nBK und NY System hinzugefügt (Dank der Linie)\nzugdaten hinzugefügt für nicht geschobene zustände",
@@ -80,19 +93,6 @@
         "pl": "pierwsze wydanie\niR_ID 01 front IR (ang.)\nrewitalizacja",
         "uk": "початковий реліз\nвідправити ir (тільки IR_ID 01 передній IR)\nревенивний ir",
         "zh-cn": "初步释放\n送信(即IR_ID 001前 IR)\n重新定性"
-      },
-      "0.0.1": {
-        "en": "initial release",
-        "de": "Erstveröffentlichung",
-        "ru": "Начальная версия",
-        "pt": "lançamento inicial",
-        "nl": "Eerste uitgave",
-        "fr": "Première version",
-        "it": "Versione iniziale",
-        "es": "Versión inicial",
-        "pl": "Pierwsze wydanie",
-        "zh-cn": "首次出版",
-        "uk": "початковий випуск"
       }
     },
     "titleLang": {
