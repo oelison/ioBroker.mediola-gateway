@@ -149,6 +149,33 @@ class MediolaGateway extends utils.Adapter {
                         native: {}
                       });
                       this.setState("state." + objName, { val: element.state, ack: true });
+                    } else if (element.type === "RT") {
+                      const objName = element.type + element.adr;
+                      if (element.adr.length != 6) {
+                        this.log.error("this RT element has not 6 chars: " + element.adr);
+                      }
+                      this.setObjectNotExists("state." + objName, {
+                        type: "state",
+                        common: {
+                          name: "RT " + element.adr,
+                          type: "string",
+                          role: "text",
+                          read: true,
+                          write: false
+                        },
+                        native: {}
+                      });
+                      this.setObjectNotExists("action." + objName, {
+                        type: "state",
+                        common: {
+                          name: "RT " + element.adr + " 1=up, 2=down, 3=stop",
+                          type: "string",
+                          role: "text",
+                          read: true,
+                          write: true
+                        },
+                        native: {}
+                      });
                     } else {
                       const objName = "sysvars.id" + element.adr;
                       const description = "sysvar" + element.adr;
@@ -277,6 +304,8 @@ class MediolaGateway extends utils.Adapter {
               }
             } else if (jsonData.type === "WR") {
               this.log.debug(JSON.stringify(jsonData));
+            } else if (jsonData.type === "RT") {
+              this.log.debug(JSON.stringify(jsonData));
             } else if (jsonData.type === "HM") {
             } else {
               this.log.debug("data type not known: " + jsonData.type);
@@ -394,6 +423,7 @@ class MediolaGateway extends utils.Adapter {
     this.subscribeStates("action.WR*");
     this.subscribeStates("action.BK*");
     this.subscribeStates("action.NY*");
+    this.subscribeStates("action.RT*");
   }
   onUnload(callback) {
     try {
@@ -522,6 +552,37 @@ class MediolaGateway extends utils.Adapter {
                 }
               }).catch((error) => {
                 this.log.error("mediola device not reached by sending SC data to BK");
+                this.log.error(error);
+              });
+            }
+          } else {
+            this.log.debug("Wrong subfolder: " + subfolder + "from device: " + dataName);
+          }
+        } else if (dataName.startsWith("RT")) {
+          if (subfolder === "action") {
+            const bkId = dataName.replace("RT", "");
+            let direction = "10";
+            if (state.val === "1") {
+              direction = "20";
+            } else if (state.val === "2") {
+              direction = "40";
+            } else if (state.val == "3") {
+              direction = "10";
+            } else {
+              this.log.error("only 1 (up), 2 (down) or 3 (stop) is allowed. For safety do a stop");
+            }
+            if (validMediolaFound) {
+              let reqUrl = this.genURL() + "XC_FNC=SendSC&type=RT&data=" + direction + bkId;
+              reqUrl = encodeURI(reqUrl);
+              import_axios.default.get(reqUrl).then((res) => {
+                this.log.debug(res.data);
+                if (res.data.toString().includes("XC_SUC") === false) {
+                  this.log.error(
+                    "mediola device rejected the command: " + state.val + " response: " + res.data
+                  );
+                }
+              }).catch((error) => {
+                this.log.error("mediola device not reached by sending SC data to RT");
                 this.log.error(error);
               });
             }
