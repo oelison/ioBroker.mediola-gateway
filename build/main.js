@@ -423,6 +423,7 @@ class MediolaGateway extends utils.Adapter {
     this.subscribeStates("action.WR*");
     this.subscribeStates("action.BK*");
     this.subscribeStates("action.NY*");
+    this.subscribeStates("action.DY*");
     this.subscribeStates("action.RT*");
   }
   onUnload(callback) {
@@ -620,6 +621,41 @@ class MediolaGateway extends utils.Adapter {
               }
             } else {
               this.log.error("NY id is not 8 chars long.");
+            }
+          } else {
+            this.log.debug("Wrong subfolder: " + subfolder + "from device: " + dataName);
+          }
+        } else if (dataName.startsWith("DY")) {
+          if (subfolder === "action") {
+            const bkId = dataName.replace("DY", "");
+            if (bkId.length === 8) {
+              let direction = "55";
+              if (state.val === "1") {
+                direction = "11";
+              } else if (state.val === "2") {
+                direction = "33";
+              } else if (state.val === "3") {
+                direction = "55";
+              } else {
+                this.log.error("only 1 (up), 2 (down) or 3 (stop) is allowed. For safety do a stop");
+              }
+              if (validMediolaFound) {
+                let reqUrl = this.genURL() + "XC_FNC=SendSC&type=DY&data=" + bkId + direction;
+                reqUrl = encodeURI(reqUrl);
+                import_axios.default.get(reqUrl).then((res) => {
+                  this.log.debug(res.data);
+                  if (res.data.toString().includes("XC_SUC") === false) {
+                    this.log.error(
+                      "mediola device rejected the command: " + state.val + " response: " + res.data
+                    );
+                  }
+                }).catch((error) => {
+                  this.log.error("mediola device not reached by sending SC data to DY");
+                  this.log.error(error);
+                });
+              }
+            } else {
+              this.log.error("DY id is not 8 chars long.");
             }
           } else {
             this.log.debug("Wrong subfolder: " + subfolder + "from device: " + dataName);
