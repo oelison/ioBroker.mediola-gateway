@@ -1,199 +1,202 @@
 {
-  "common": {
-    "name": "mediola-gateway",
-    "version": "1.0.1",
-    "news": {
-      "1.0.1": {
-        "en": "folder action created as real folder\nfolder sysvars created as real folder",
-        "de": "ordner aktion erstellt als realer ordner\nordner sysvars erstellt als realer ordner",
-        "ru": "действие папки создано как реальная папка\nпапка sysvars создана как настоящая папка",
-        "pt": "ação da pasta criada como pasta real\nsysvars pasta criada como pasta real",
-        "nl": "volder actie gecreëerd als echte map\nfolder sysvars gecreëerd als echte map",
-        "fr": "action de dossier créé comme vrai dossier\ndossier sysvars créé comme vrai dossier",
-        "it": "azione cartella creata come vera cartella\ncartella sysvars creato come cartella reale",
-        "es": "acción de carpeta creada como carpeta real\nsysvars carpeta creado como carpeta real",
-        "pl": "akcja folderów stworzona jako real folder\nfolder sysvars stworzony jako prawdziwy folder",
-        "uk": "дію папки, створених як реальна папка\nsysvars папки, створених як реальна папка",
-        "zh-cn": "a. 产生作为实际内容的行动\na. 制造的倍多的麻风气是实在的。"
-      },
-      "1.0.0": {
-        "en": "user and password login to mediola\nWIR system added (Thanks to Keulehd)\nBK and NY system added (Thanks to line)\npull data added for not pushed states",
-        "de": "benutzer- und passwortanmeldung bei mediola\nWIR System hinzugefügt (Danke an Keulehd)\nBK und NY System hinzugefügt (Dank der Linie)\nzugdaten hinzugefügt für nicht geschobene zustände",
-        "ru": "логин пользователя и пароля на mediola\nДобавлена система WIR (Спасибо Keulehd)\nДобавлена система BK и NY (Спасибо)\nтяните данные, добавленные для не толкованных государств",
-        "pt": "login de usuário e senha para mediola\nSistema WIR adicionado (Graças a Keulehd)\nBK e NY sistema adicionado (Graças à linha)\npull data adicionado para estados não empurrados",
-        "nl": "gebruiker en wachtwoord login\nWIR-systeem toegevoegd\nBK en NY-systeem toegevoegd\nvertaling:",
-        "fr": "login utilisateur et mot de passe pour mediola\nSystème WIR ajouté (Merci à Keulehd)\nSystème BK et NY ajouté (Merci à la ligne)\ntirer les données ajoutées pour les états non poussés",
-        "it": "login utente e password a mediola\nSistema WIR aggiunto (Grazie a Keulehd)\nSistema BK e NY aggiunto (Grazie alla linea)\ntirare i dati aggiunti per stati non spinti",
-        "es": "usuario y contraseña login a mediola\nSistema WIR añadido (Gracias a Keulehd)\nSistema BK y NY añadido (Gracias a la línea)\nextraer datos añadidos para estados no empujados",
-        "pl": "użytkownik i logik w mediali\nSystem WIR został dodany (Thanks to Keulehd)\nSystemy BK i NY (dodatki do linii)\ndane dodają do niemożliwych stanów",
-        "uk": "ім'я користувача та пароля\nДодана система WIR (Танкс до Keulehd)\nДодана система BK і NY (Танкс до лінії)\nдодані дані не підштовховані стани",
-        "zh-cn": "伊迪拉的用户和密码\nIR系统增加(Kulehd)\nBK和《纽约系统》增加(以线为线)\n撤销未被推断国家的数据"
-      },
-      "0.1.4": {
-        "en": "axios with log error on error\nack true for readonly objects\nack check on state change\ninvalid chars checked",
-        "de": "axios mit log-fehler auf fehler\nack wahr für leseobjekte\nack check on state change\nungültige zeichen geprüft",
-        "ru": "axios с ошибкой в журнале об ошибке\nack true для читательных объектов\nпроверка на изменение состояния\nнедействительные заряды проверены",
-        "pt": "axios com erro de log no erro\nack true para objetos somente leitura\nack check on mudança de estado\ninválidos verificadas",
-        "nl": "axios met logfout\nack waar voor lasonly objecten\nack check of state change\ninvalide charisaties gecontroleerd",
-        "fr": "axios avec erreur de journal sur erreur\nack true for readonly objects\nack check on state change\nnon valides",
-        "it": "assio con errore di registro sull'errore\nack vero per oggetti in sola lettura\nack check sul cambiamento di stato\nnon valido",
-        "es": "axios con error de registro en error\nack verdadero para objetos de sólo lectura\nack check on state change\nacreditados inválidos",
-        "pl": "axie z błędem logicznym\nposługuje się czytelnikiem obiektów\nodpowiada w sprawie zmiany stanu\nkaroseria",
-        "uk": "axios з лог-повідомлення про помилку\nack true for readonly предмети\nконтроль стану\nнедійсні заїзди",
-        "zh-cn": "a 错误的逻辑错误\n目 录\n国家变化检查\n检查无效的指控"
-      },
-      "0.1.3": {
-        "en": "test and release script corrected",
-        "de": "test- und releaseskript korrigiert",
-        "ru": "тест и релиз скрипт исправлен",
-        "pt": "test e release script corrigido",
-        "nl": "de test en het script gecorrigeerd",
-        "fr": "test and release script corrected",
-        "it": "test e script di rilascio corretto",
-        "es": "test y script de liberación corregido",
-        "pl": "testy i wydanie skryptu poprawnie poprawiają",
-        "uk": "тестування і реліз сценарії виправлено",
-        "zh-cn": "试验和释放经纠正"
-      },
-      "0.1.2": {
-        "en": "npm deploy activated\nReadme improved",
-        "de": "npm aktiviert\nReader verbessert",
-        "ru": "npm развернуть активирован\nReadme улучшено",
-        "pt": "npm deploy ativado\nMelhoria da leitura",
-        "nl": "npm ingezet\nVerbeter me",
-        "fr": "npm déployer activé\nReadme améliorée",
-        "it": "npm deploy attivato\nReadme migliorato",
-        "es": "npm desplegable activado\nMejorado",
-        "pl": "rozwijanie gniazda aktywowane\nReady",
-        "uk": "npm активовано\nПокращений",
-        "zh-cn": "未部署\n阅读摘要"
-      },
-      "0.1.1": {
-        "en": "dependencies update",
-        "de": "aktualisierung der abhängigkeiten",
-        "ru": "обновление зависимости",
-        "pt": "atualização de dependências",
-        "nl": "afhankelijke update",
-        "fr": "mise à jour des dépendances",
-        "it": "aggiornamento delle dipendenze",
-        "es": "actualización de las dependencias",
-        "pl": "aktualizacja",
-        "uk": "оновлення залежності",
-        "zh-cn": "a. 应急"
-      },
-      "0.1.0": {
-        "en": "initial release\nsend ir (only IR_ID 01 front IR)\nreveive ir",
-        "de": "erstausstrahlung\nsenden ir (nur IR_ID 01 front IR)\nreveive-ir",
-        "ru": "начальный выпуск\nотправить ir (только IR_ID 01 передний IR)\nоткровенный ir",
-        "pt": "lançamento inicial\nenviar ir (apenas IR_ID 01 frente IR)\nrevejoso ir",
-        "nl": "niet\nverstuur \nreve",
-        "fr": "initial release\nenvoyer ir (uniquement IR_ID 01 avant IR)\nreveive ir",
-        "it": "rilascio iniziale\ninviare ir (solo IR_ID 01 anteriore IR)\n)",
-        "es": "liberación inicial\nenviar ir (sólo IR_ID 01 delantero IR)\nreveive ir",
-        "pl": "pierwsze wydanie\niR_ID 01 front IR (ang.)\nrewitalizacja",
-        "uk": "початковий реліз\nвідправити ir (тільки IR_ID 01 передній IR)\nревенивний ir",
-        "zh-cn": "初步释放\n送信(即IR_ID 001前 IR)\n重新定性"
-      }
+    "common": {
+        "name": "mediola-gateway",
+        "version": "1.0.1",
+        "news": {
+            "1.0.1": {
+                "en": "folder action created as real folder\nfolder sysvars created as real folder",
+                "de": "ordner aktion erstellt als realer ordner\nordner sysvars erstellt als realer ordner",
+                "ru": "действие папки создано как реальная папка\nпапка sysvars создана как настоящая папка",
+                "pt": "ação da pasta criada como pasta real\nsysvars pasta criada como pasta real",
+                "nl": "volder actie gecreëerd als echte map\nfolder sysvars gecreëerd als echte map",
+                "fr": "action de dossier créé comme vrai dossier\ndossier sysvars créé comme vrai dossier",
+                "it": "azione cartella creata come vera cartella\ncartella sysvars creato come cartella reale",
+                "es": "acción de carpeta creada como carpeta real\nsysvars carpeta creado como carpeta real",
+                "pl": "akcja folderów stworzona jako real folder\nfolder sysvars stworzony jako prawdziwy folder",
+                "uk": "дію папки, створених як реальна папка\nsysvars папки, створених як реальна папка",
+                "zh-cn": "a. 产生作为实际内容的行动\na. 制造的倍多的麻风气是实在的。"
+            },
+            "1.0.0": {
+                "en": "user and password login to mediola\nWIR system added (Thanks to Keulehd)\nBK and NY system added (Thanks to line)\npull data added for not pushed states",
+                "de": "benutzer- und passwortanmeldung bei mediola\nWIR System hinzugefügt (Danke an Keulehd)\nBK und NY System hinzugefügt (Dank der Linie)\nzugdaten hinzugefügt für nicht geschobene zustände",
+                "ru": "логин пользователя и пароля на mediola\nДобавлена система WIR (Спасибо Keulehd)\nДобавлена система BK и NY (Спасибо)\nтяните данные, добавленные для не толкованных государств",
+                "pt": "login de usuário e senha para mediola\nSistema WIR adicionado (Graças a Keulehd)\nBK e NY sistema adicionado (Graças à linha)\npull data adicionado para estados não empurrados",
+                "nl": "gebruiker en wachtwoord login\nWIR-systeem toegevoegd\nBK en NY-systeem toegevoegd\nvertaling:",
+                "fr": "login utilisateur et mot de passe pour mediola\nSystème WIR ajouté (Merci à Keulehd)\nSystème BK et NY ajouté (Merci à la ligne)\ntirer les données ajoutées pour les états non poussés",
+                "it": "login utente e password a mediola\nSistema WIR aggiunto (Grazie a Keulehd)\nSistema BK e NY aggiunto (Grazie alla linea)\ntirare i dati aggiunti per stati non spinti",
+                "es": "usuario y contraseña login a mediola\nSistema WIR añadido (Gracias a Keulehd)\nSistema BK y NY añadido (Gracias a la línea)\nextraer datos añadidos para estados no empujados",
+                "pl": "użytkownik i logik w mediali\nSystem WIR został dodany (Thanks to Keulehd)\nSystemy BK i NY (dodatki do linii)\ndane dodają do niemożliwych stanów",
+                "uk": "ім'я користувача та пароля\nДодана система WIR (Танкс до Keulehd)\nДодана система BK і NY (Танкс до лінії)\nдодані дані не підштовховані стани",
+                "zh-cn": "伊迪拉的用户和密码\nIR系统增加(Kulehd)\nBK和《纽约系统》增加(以线为线)\n撤销未被推断国家的数据"
+            },
+            "0.1.4": {
+                "en": "axios with log error on error\nack true for readonly objects\nack check on state change\ninvalid chars checked",
+                "de": "axios mit log-fehler auf fehler\nack wahr für leseobjekte\nack check on state change\nungültige zeichen geprüft",
+                "ru": "axios с ошибкой в журнале об ошибке\nack true для читательных объектов\nпроверка на изменение состояния\nнедействительные заряды проверены",
+                "pt": "axios com erro de log no erro\nack true para objetos somente leitura\nack check on mudança de estado\ninválidos verificadas",
+                "nl": "axios met logfout\nack waar voor lasonly objecten\nack check of state change\ninvalide charisaties gecontroleerd",
+                "fr": "axios avec erreur de journal sur erreur\nack true for readonly objects\nack check on state change\nnon valides",
+                "it": "assio con errore di registro sull'errore\nack vero per oggetti in sola lettura\nack check sul cambiamento di stato\nnon valido",
+                "es": "axios con error de registro en error\nack verdadero para objetos de sólo lectura\nack check on state change\nacreditados inválidos",
+                "pl": "axie z błędem logicznym\nposługuje się czytelnikiem obiektów\nodpowiada w sprawie zmiany stanu\nkaroseria",
+                "uk": "axios з лог-повідомлення про помилку\nack true for readonly предмети\nконтроль стану\nнедійсні заїзди",
+                "zh-cn": "a 错误的逻辑错误\n目 录\n国家变化检查\n检查无效的指控"
+            },
+            "0.1.3": {
+                "en": "test and release script corrected",
+                "de": "test- und releaseskript korrigiert",
+                "ru": "тест и релиз скрипт исправлен",
+                "pt": "test e release script corrigido",
+                "nl": "de test en het script gecorrigeerd",
+                "fr": "test and release script corrected",
+                "it": "test e script di rilascio corretto",
+                "es": "test y script de liberación corregido",
+                "pl": "testy i wydanie skryptu poprawnie poprawiają",
+                "uk": "тестування і реліз сценарії виправлено",
+                "zh-cn": "试验和释放经纠正"
+            },
+            "0.1.2": {
+                "en": "npm deploy activated\nReadme improved",
+                "de": "npm aktiviert\nReader verbessert",
+                "ru": "npm развернуть активирован\nReadme улучшено",
+                "pt": "npm deploy ativado\nMelhoria da leitura",
+                "nl": "npm ingezet\nVerbeter me",
+                "fr": "npm déployer activé\nReadme améliorée",
+                "it": "npm deploy attivato\nReadme migliorato",
+                "es": "npm desplegable activado\nMejorado",
+                "pl": "rozwijanie gniazda aktywowane\nReady",
+                "uk": "npm активовано\nПокращений",
+                "zh-cn": "未部署\n阅读摘要"
+            },
+            "0.1.1": {
+                "en": "dependencies update",
+                "de": "aktualisierung der abhängigkeiten",
+                "ru": "обновление зависимости",
+                "pt": "atualização de dependências",
+                "nl": "afhankelijke update",
+                "fr": "mise à jour des dépendances",
+                "it": "aggiornamento delle dipendenze",
+                "es": "actualización de las dependencias",
+                "pl": "aktualizacja",
+                "uk": "оновлення залежності",
+                "zh-cn": "a. 应急"
+            },
+            "0.1.0": {
+                "en": "initial release\nsend ir (only IR_ID 01 front IR)\nreveive ir",
+                "de": "erstausstrahlung\nsenden ir (nur IR_ID 01 front IR)\nreveive-ir",
+                "ru": "начальный выпуск\nотправить ir (только IR_ID 01 передний IR)\nоткровенный ir",
+                "pt": "lançamento inicial\nenviar ir (apenas IR_ID 01 frente IR)\nrevejoso ir",
+                "nl": "niet\nverstuur \nreve",
+                "fr": "initial release\nenvoyer ir (uniquement IR_ID 01 avant IR)\nreveive ir",
+                "it": "rilascio iniziale\ninviare ir (solo IR_ID 01 anteriore IR)\n)",
+                "es": "liberación inicial\nenviar ir (sólo IR_ID 01 delantero IR)\nreveive ir",
+                "pl": "pierwsze wydanie\niR_ID 01 front IR (ang.)\nrewitalizacja",
+                "uk": "початковий реліз\nвідправити ir (тільки IR_ID 01 передній IR)\nревенивний ir",
+                "zh-cn": "初步释放\n送信(即IR_ID 001前 IR)\n重新定性"
+            }
+        },
+        "titleLang": {
+            "en": "mediola GW",
+            "de": "mediola GW",
+            "ru": "Медиола GW",
+            "pt": "mediola GW",
+            "nl": "mediola GW",
+            "fr": "médiole GW",
+            "it": "mediola GW",
+            "es": "mediola gw",
+            "pl": "mediala GW",
+            "zh-cn": "梅迪奥拉 GW",
+            "uk": "mediola GW"
+        },
+        "desc": {
+            "en": "Konfiguration und Verwendung des Mediola-Gateways",
+            "de": "Konfiguration und Verwendung des Mediola-Gateways",
+            "ru": "Конфигурация и проверка шлюзов Mediola",
+            "pt": "Konfiguration und Verwendung des Mediola-Gateways",
+            "nl": "Configuratie en gebruik van Mediola-Gateways",
+            "fr": "Configuration et Verwendung des Mediola-Gateways",
+            "it": "Configurazione e verifica dei gateway Mediola",
+            "es": "Konfiguration und Verwendung des Mediola-Gateways",
+            "pl": "Konfiguration und Verwendung des Mediola-Gateways",
+            "zh-cn": "Mediola-Gateways 的配置和配置",
+            "uk": "Configuration und Verwendung des Mediola-Gateways"
+        },
+        "authors": [
+            "oelison <iobrokermediola@sciphy.de>"
+        ],
+        "keywords": [
+            "media",
+            "gateway",
+            "mediola"
+        ],
+        "license": "MIT",
+        "platform": "Javascript/Node.js",
+        "main": "build/main.js",
+        "icon": "mediola-gateway.png",
+        "enabled": true,
+        "extIcon": "https://raw.githubusercontent.com/oelison/ioBroker.mediola-gateway/main/admin/mediola-gateway.png",
+        "readme": "https://github.com/oelison/ioBroker.mediola-gateway/blob/main/README.md",
+        "loglevel": "info",
+        "mode": "daemon",
+        "type": "multimedia",
+        "compact": true,
+        "connectionType": "local",
+        "dataSource": "push",
+        "adminUI": {
+            "config": "json"
+        },
+        "dependencies": [
+            {
+                "js-controller": ">=3.3.22"
+            }
+        ],
+        "globalDependencies": [
+            {
+                "admin": ">=5.1.13"
+            }
+        ]
     },
-    "titleLang": {
-      "en": "mediola GW",
-      "de": "mediola GW",
-      "ru": "Медиола GW",
-      "pt": "mediola GW",
-      "nl": "mediola GW",
-      "fr": "médiole GW",
-      "it": "mediola GW",
-      "es": "mediola gw",
-      "pl": "mediala GW",
-      "zh-cn": "梅迪奥拉 GW",
-      "uk": "mediola GW"
-    },
-    "desc": {
-      "en": "Konfiguration und Verwendung des Mediola-Gateways",
-      "de": "Konfiguration und Verwendung des Mediola-Gateways",
-      "ru": "Конфигурация и проверка шлюзов Mediola",
-      "pt": "Konfiguration und Verwendung des Mediola-Gateways",
-      "nl": "Configuratie en gebruik van Mediola-Gateways",
-      "fr": "Configuration et Verwendung des Mediola-Gateways",
-      "it": "Configurazione e verifica dei gateway Mediola",
-      "es": "Konfiguration und Verwendung des Mediola-Gateways",
-      "pl": "Konfiguration und Verwendung des Mediola-Gateways",
-      "zh-cn": "Mediola-Gateways 的配置和配置",
-      "uk": "Configuration und Verwendung des Mediola-Gateways"
-    },
-    "authors": [
-      "oelison <iobrokermediola@sciphy.de>"
+    "encryptedNative": [
+        "password",
+        "auth"
     ],
-    "keywords": [
-      "media",
-      "gateway",
-      "mediola"
+    "protectedNative": [
+        "password",
+        "auth"
     ],
-    "license": "MIT",
-    "platform": "Javascript/Node.js",
-    "main": "build/main.js",
-    "icon": "mediola-gateway.png",
-    "enabled": true,
-    "extIcon": "https://raw.githubusercontent.com/oelison/ioBroker.mediola-gateway/main/admin/mediola-gateway.png",
-    "readme": "https://github.com/oelison/ioBroker.mediola-gateway/blob/main/README.md",
-    "loglevel": "info",
-    "mode": "daemon",
-    "type": "multimedia",
-    "compact": true,
-    "connectionType": "local",
-    "dataSource": "push",
-    "adminUI": {
-      "config": "json"
+    "native": {
+        "autoDetect": true,
+        "findByMAC": false,
+        "mac": "00:00:00:00:00:00",
+        "findByIp": false,
+        "ip": "192.168.0.1",
+        "username": "",
+        "password": "",
+        "auth": "",
+        "pullData": false
     },
-    "dependencies": [
-      {
-        "js-controller": ">=3.3.22"
-      }
-    ],
-    "globalDependencies": [
-      {
-        "admin": ">=5.1.13"
-      }
+    "objects": [],
+    "instanceObjects": [
+        {
+            "_id": "info",
+            "type": "channel",
+            "common": {
+                "name": "Information"
+            },
+            "native": {}
+        },
+        {
+            "_id": "info.connection",
+            "type": "state",
+            "common": {
+                "role": "indicator.connected",
+                "name": "Device or service connected",
+                "type": "boolean",
+                "read": true,
+                "write": false,
+                "def": false
+            },
+            "native": {}
+        }
     ]
-  },
-  "encryptedNative": [
-    "password"
-  ],
-  "protectedNative": [
-    "password"
-  ],
-  "native": {
-    "autoDetect": true,
-    "findByMAC": false,
-    "mac": "00:00:00:00:00:00",
-    "findByIp": false,
-    "ip": "192.168.0.1",
-    "username": "",
-    "password": "",
-    "pullData": false
-  },
-  "objects": [],
-  "instanceObjects": [
-    {
-      "_id": "info",
-      "type": "channel",
-      "common": {
-        "name": "Information"
-      },
-      "native": {}
-    },
-    {
-      "_id": "info.connection",
-      "type": "state",
-      "common": {
-        "role": "indicator.connected",
-        "name": "Device or service connected",
-        "type": "boolean",
-        "read": true,
-        "write": false,
-        "def": false
-      },
-      "native": {}
-    }
-  ]
 }

@@ -18,5 +18,7 @@
     "pullData": "leer el estado de Mediola",
     "helpPullData": "Usar solo cuando no se reciben eventos.",
     "pullDataInterval": "intervalo de tiempo para extracción en minutos",
-    "helpPullDataInterval": "Con qué frecuencia se genera la solicitud a la mediola."
+    "helpPullDataInterval": "Con qué frecuencia se genera la solicitud a la mediola.",
+    "authkey": "Clave de autenticación",
+    "helpAuthkey": "Clave de autoridad mediola"
 }

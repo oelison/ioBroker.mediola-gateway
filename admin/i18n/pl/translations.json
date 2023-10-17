@@ -18,5 +18,7 @@
     "pullData": "przeczytaj status z Medioli",
     "helpPullData": "Używaj tylko wtedy, gdy zdarzenia nie są odbierane.",
     "pullDataInterval": "przedział czasowy dla pociągnięcia w minutach",
-    "helpPullDataInterval": "Jak często generowane jest żądanie do medioli."
+    "helpPullDataInterval": "Jak często generowane jest żądanie do medioli.",
+    "authkey": "Klucz autoryzujący",
+    "helpAuthkey": "Klucz uprawnień Mediola"
 }
