@@ -64,6 +64,14 @@
                     "label": "password",
                     "help": "helpPassword"
                 },
+                "auth": {
+                    "type": "password",
+                    "sm": 12,
+                    "md": 6,
+                    "lg": 6,
+                    "label": "authkey",
+                    "help": "helpAuthkey"
+                },
                 "pullData": {
                     "newLine": true,
                     "type": "checkbox",

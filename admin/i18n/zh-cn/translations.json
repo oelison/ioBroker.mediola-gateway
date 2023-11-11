@@ -18,5 +18,7 @@
     "pullData": "从 Mediola 读取状态",
     "helpPullData": "仅当未收到事件时使用。",
     "pullDataInterval": "拉动时间跨度（分钟）",
-    "helpPullDataInterval": "向 mediola 发出请求的频率。"
+    "helpPullDataInterval": "向 mediola 发出请求的频率。",
+    "authkey": "授权键",
+    "helpAuthkey": "Mediola 权限密钥"
 }

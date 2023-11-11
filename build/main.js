@@ -57,7 +57,11 @@ class MediolaGateway extends utils.Adapter {
   genURL() {
     let retVal = "";
     if (this.config.username === "") {
-      retVal = "http://" + foundIpAddress + "/command?";
+      if (this.config.auth === "") {
+        retVal = "http://" + foundIpAddress + "/command?auth=" + this.config.auth + "&";
+      } else {
+        retVal = "http://" + foundIpAddress + "/command?";
+      }
     } else {
       retVal = "http://" + foundIpAddress + "/command?XC_USER=" + this.config.username + "&XC_PASS=" + this.config.password + "&";
     }
@@ -264,7 +268,7 @@ class MediolaGateway extends utils.Adapter {
         pullDataTimer = this.setTimeout(() => {
           pullDataTimer = null;
           this.refreshStates("timeout (default)");
-        }, this.config.pullDataInterval * 6e4);
+        }, pullInterval * 6e4);
       }
     }
   }

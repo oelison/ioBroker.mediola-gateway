@@ -18,5 +18,7 @@
     "pullData": "lees status van Mediola",
     "helpPullData": "Alleen gebruiken wanneer gebeurtenissen niet worden ontvangen.",
     "pullDataInterval": "tijdspanne voor pull in minuten",
-    "helpPullDataInterval": "Hoe vaak het verzoek aan de mediola wordt gegenereerd."
+    "helpPullDataInterval": "Hoe vaak het verzoek aan de mediola wordt gegenereerd.",
+    "authkey": "Inlogcode",
+    "helpAuthkey": "Mediola-autoriteitssleutel"
 }

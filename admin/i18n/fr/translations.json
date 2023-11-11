@@ -18,5 +18,7 @@
     "pullData": "lire le statut de Mediola",
     "helpPullData": "À utiliser uniquement lorsque les événements ne sont pas reçus.",
     "pullDataInterval": "laps de temps pour tirer en minutes",
-    "helpPullDataInterval": "Combien de fois la demande à la médiole est générée."
+    "helpPullDataInterval": "Combien de fois la demande à la médiole est générée.",
+    "authkey": "Clé d'authentification",
+    "helpAuthkey": "Clé d'autorité Mediola"
 }

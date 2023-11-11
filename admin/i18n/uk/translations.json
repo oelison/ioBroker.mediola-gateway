@@ -18,5 +18,7 @@
     "pullData": "читати статус від Mediola",
     "helpPullData": "Використовуйте лише тоді, коли події не отримано.",
     "pullDataInterval": "проміжок часу для витягування в хвилинах",
-    "helpPullDataInterval": "Як часто генерується запит до медіоли."
+    "helpPullDataInterval": "Як часто генерується запит до медіоли.",
+    "authkey": "Authkey",
+    "helpAuthkey": "Ключ повноважень Mediola"
 }
