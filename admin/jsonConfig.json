@@ -88,6 +88,14 @@
                     "lg": 6,
                     "label": "pullDataInterval",
                     "help": "helpPullDataInterval"
+                },
+                "mediolaV5orHigher": {
+                    "type": "checkbox",
+                    "sm": 12,
+                    "md": 6,
+                    "lg": 6,
+                    "label": "mediolaV5orHigher",
+                    "help": "helpMediolaV5orHigher"
                 }
             }
         }

@@ -64,6 +64,8 @@ DISCLAIMER All product and company names or logos are Trademarks™ or Registere
 -   RT (Somfy) system added (Thanks to Falk)
 -   DY (Nobily) system added (Thanks to BlindlyBlinds)
 -   ER (Elero) system added (Thanks to CsL-007 [#35](https://github.com/oelison/ioBroker.mediola-gateway/issues/35))
+-   HM (HomeMatic) read added (Thanks to drapo)
+-   command and cmd calls possible
 
 ### 1.0.1 (2023-08-26)
 

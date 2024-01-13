@@ -20,5 +20,7 @@
     "pullDataInterval": "intervalo de tiempo para extracción en minutos",
     "helpPullDataInterval": "Con qué frecuencia se genera la solicitud a la mediola.",
     "authkey": "Clave de autenticación",
-    "helpAuthkey": "Clave de autoridad mediola"
+    "helpAuthkey": "Clave de autoridad mediola",
+    "mediolaV5orHigher": "intenta usar el cmd y no el comando.",
+    "helpMediolaV5orHigher": "Parece que el mediola V5 también tiene un uso de cmd. La API no menciona esto."
 }

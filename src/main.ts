@@ -20,7 +20,16 @@ type MediolaEvt = { type: string; data: string };
 function isMediolaEvt(o: any): o is MediolaEvt {
     return "type" in o && "data" in o;
 }
-type MediolaSysVarArray = [{ type: string; adr: string; state: string }];
+type MediolaSysVarArray = [
+    {
+        type: string;
+        adr: string;
+        state: string;
+        id: number;
+        active: boolean;
+    },
+];
+type HmState = { lowbat: boolean; state: string };
 function isMediolaSysVarArray(o: any): o is MediolaSysVarArray {
     return true;
 }
@@ -54,17 +63,23 @@ class MediolaGateway extends utils.Adapter {
      */
     private genURL(): string {
         let retVal = "";
+        let commandType = "command";
+        if (this.config.mediolaV5orHigher === true) {
+            commandType = "cmd";
+        }
         if (this.config.username === "") {
             if (this.config.auth === "") {
-                retVal = "http://" + foundIpAddress + "/command?auth=" + this.config.auth + "&";
+                retVal = "http://" + foundIpAddress + "/" + commandType + "?auth=" + this.config.auth + "&";
             } else {
-                retVal = "http://" + foundIpAddress + "/command?";
+                retVal = "http://" + foundIpAddress + "/" + commandType + "?";
             }
         } else {
             retVal =
                 "http://" +
                 foundIpAddress +
-                "/command?XC_USER=" +
+                "/" +
+                commandType +
+                "?XC_USER=" +
                 this.config.username +
                 "&XC_PASS=" +
                 this.config.password +
@@ -78,20 +93,41 @@ class MediolaGateway extends utils.Adapter {
      */
     private async readAllSystemVars(timerRead: boolean): Promise<void> {
         this.log.debug(
-            "validMediola: " + validMediolaFound + " sysvarInti: " + sysvarInit + " timerRead: " + timerRead,
+            "validMediola: " +
+                validMediolaFound +
+                " sysvarInti: " +
+                sysvarInit +
+                " timerRead: " +
+                timerRead +
+                " cmd " +
+                this.config.mediolaV5orHigher +
+                " pull " +
+                this.config.pullData,
         );
         if ((validMediolaFound && !sysvarInit) || timerRead) {
             sysvarInit = true;
             let reqUrl = this.genURL() + "XC_FNC=getstates";
             reqUrl = encodeURI(reqUrl);
+            this.log.debug(reqUrl);
             axios
                 .get(reqUrl)
                 .then((res) => {
                     this.log.debug(res.data);
+                    let jsonData = null;
+                    let validJsonData = false;
                     if (res.data.toString().startsWith("{XC_SUC}")) {
-                        this.log.debug("mediola device found data: " + res.data);
+                        jsonData = JSON.parse(res.data.substring(8));
+                        validJsonData = true;
+                    } else if (res.data.toString().standart('{"XC_SUC":[')) {
+                        jsonData = JSON.parse(res.data).XC_SUC;
+                        validJsonData = true;
+                    } else {
+                        jsonData = [];
+                    }
+                    if (validJsonData) {
+                        //this.log.debug("mediola device found data: " + res.data);
                         try {
-                            const jsonData = JSON.parse(res.data.substring(8));
+                            this.log.debug("mediola device found data: " + JSON.stringify(jsonData));
                             if (isMediolaSysVarArray(jsonData)) {
                                 if (jsonData.length > 0) {
                                     for (let index = 0; index < jsonData.length; index++) {
@@ -99,7 +135,23 @@ class MediolaGateway extends utils.Adapter {
                                         this.log.debug(JSON.stringify(element));
                                         // element.adr is from 01 to ff, no invalid chars possible according specification
                                         // discard element, when not following the naming standart (just for sure)
-                                        if (this.validName(element.adr)) {
+                                        if (element.type === "TASK") {
+                                            const taskId = element.id;
+                                            const taskActive = element.active;
+                                            const objName = "TASK" + taskId;
+                                            this.setObjectNotExists("state." + objName, {
+                                                type: "state",
+                                                common: {
+                                                    name: "TASK " + taskId,
+                                                    type: "boolean",
+                                                    role: "text",
+                                                    read: true,
+                                                    write: false,
+                                                },
+                                                native: {},
+                                            });
+                                            this.setState("state." + objName, { val: taskActive, ack: true });
+                                        } else if (this.validName(element.adr)) {
                                             let objState = "";
                                             if (element.type === "WR") {
                                                 const objName = element.type + element.adr;
@@ -221,6 +273,27 @@ class MediolaGateway extends utils.Adapter {
                                                     native: {},
                                                 });
                                                 this.setState("state." + objName, { val: element.state, ack: true });
+                                            } else if (element.type === "HM") {
+                                                if (JSON.stringify(element.state) != "{}") {
+                                                    const objName = "state." + element.adr;
+                                                    const hmState: HmState = JSON.parse(JSON.stringify(element.state));
+                                                    if ("state" in hmState) {
+                                                        this.log.debug(JSON.stringify(hmState.state));
+                                                        this.log.debug("8"); // hm data
+                                                        this.setObjectNotExists(objName, {
+                                                            type: "state",
+                                                            common: {
+                                                                name: "HM device with state",
+                                                                type: "string",
+                                                                role: "text",
+                                                                read: true,
+                                                                write: false,
+                                                            },
+                                                            native: {},
+                                                        });
+                                                        this.setState(objName, { val: hmState.state, ack: true });
+                                                    }
+                                                }
                                             } else {
                                                 const objName = "sysvars.id" + element.adr;
                                                 const description = "sysvar" + element.adr;
@@ -246,10 +319,10 @@ class MediolaGateway extends utils.Adapter {
                                     }
                                 }
                             } else {
-                                this.log.error("json format not known:" + res.data.substring(8));
+                                this.log.error("json format not known:" + JSON.stringify(jsonData));
                             }
                         } catch (error) {
-                            this.log.error("json format invalid:" + res.data.substring(8));
+                            this.log.error("json format invalid:" + JSON.stringify(jsonData));
                         }
                     } else {
                         this.log.error("mediola device rejected the request: " + res.data);
@@ -436,6 +509,7 @@ class MediolaGateway extends utils.Adapter {
                             this.log.debug(JSON.stringify(jsonData));
                         } else if (jsonData.type === "HM") {
                             // ignor HM data
+                            this.log.debug(JSON.stringify(jsonData));
                         } else {
                             this.log.debug("data type not known: " + jsonData.type);
                             this.log.debug(JSON.stringify(jsonData));
