@@ -69,9 +69,9 @@ class MediolaGateway extends utils.Adapter {
         }
         if (this.config.username === "") {
             if (this.config.auth === "") {
-                retVal = "http://" + foundIpAddress + "/" + commandType + "?auth=" + this.config.auth + "&";
-            } else {
                 retVal = "http://" + foundIpAddress + "/" + commandType + "?";
+            } else {
+                retVal = "http://" + foundIpAddress + "/" + commandType + "?auth=" + this.config.auth + "&";
             }
         } else {
             retVal =
@@ -112,15 +112,18 @@ class MediolaGateway extends utils.Adapter {
             axios
                 .get(reqUrl)
                 .then((res) => {
-                    this.log.debug(res.data);
+                    this.log.debug(JSON.stringify(res.data));
                     let jsonData = null;
                     let validJsonData = false;
+                    this.log.debug("1");
                     if (res.data.toString().startsWith("{XC_SUC}")) {
                         jsonData = JSON.parse(res.data.substring(8));
                         validJsonData = true;
-                    } else if (res.data.toString().standart('{"XC_SUC":[')) {
-                        jsonData = JSON.parse(res.data).XC_SUC;
+                    } else if (JSON.stringify(res.data).startsWith('{"XC_SUC":[')) {
+                        this.log.debug("2");
+                        jsonData = res.data.XC_SUC;
                         validJsonData = true;
+                        this.log.debug("3");
                     } else {
                         jsonData = [];
                     }
@@ -325,7 +328,7 @@ class MediolaGateway extends utils.Adapter {
                             this.log.error("json format invalid:" + JSON.stringify(jsonData));
                         }
                     } else {
-                        this.log.error("mediola device rejected the request: " + res.data);
+                        this.log.error("mediola device rejected the request: " + res.data.toString());
                     }
                 })
                 .catch((error) => {
@@ -450,8 +453,12 @@ class MediolaGateway extends utils.Adapter {
             } else {
                 this.log.info("find by ip: " + this.config.findByIp);
                 if (this.config.findByIp == true) {
-                    waitingForIpDevice = true;
+                    waitingForIpDevice = false;
+                    validMediolaFound = true;
                     foundIpAddress = this.config.ip;
+                    this.readAllSystemVars(false);
+                    this.refreshStates("onReady");
+                    this.setState("info.connection", true, true);
                     this.log.info("with ip: " + foundIpAddress);
                 } else {
                     this.log.error("no valid detection method defined");
