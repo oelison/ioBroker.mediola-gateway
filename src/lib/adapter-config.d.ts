@@ -14,6 +14,7 @@ declare global {
             auth: string;
             pullData: boolean;
             pullDataInterval: number;
+            mediolaV5orHigher: boolean;
         }
     }
 }

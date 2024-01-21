@@ -20,5 +20,7 @@
     "pullDataInterval": "przedział czasowy dla pociągnięcia w minutach",
     "helpPullDataInterval": "Jak często generowane jest żądanie do medioli.",
     "authkey": "Klucz autoryzujący",
-    "helpAuthkey": "Klucz uprawnień Mediola"
+    "helpAuthkey": "Klucz uprawnień Mediola",
+    "mediolaV5orHigher": "spróbuj użyć cmd, a nie polecenia.",
+    "helpMediolaV5orHigher": "wygląda na to, że mediola V5 ma również użycie cmd. API o tym nie wspomina."
 }

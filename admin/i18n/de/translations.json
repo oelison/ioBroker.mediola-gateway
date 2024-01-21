@@ -20,5 +20,7 @@
     "pullDataInterval": "Zeitspanne für Pull in Minuten",
     "helpPullDataInterval": "Wie oft die Anfrage an die Mediola generiert wird.",
     "authkey": "Authentifizierungsschlüssel",
-    "helpAuthkey": "Mediola-Berechtigungsschlüssel"
+    "helpAuthkey": "Mediola-Berechtigungsschlüssel",
+    "mediolaV5orHigher": "Versuchen Sie, den Befehl cmd und nicht den Befehl command zu verwenden.",
+    "helpMediolaV5orHigher": "Es sieht so aus, als hätte Mediola V5 auch eine CMD-Nutzung. Die API erwähnt dies nicht."
 }

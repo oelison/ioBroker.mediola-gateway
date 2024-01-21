@@ -20,5 +20,7 @@
     "pullDataInterval": "tijdspanne voor pull in minuten",
     "helpPullDataInterval": "Hoe vaak het verzoek aan de mediola wordt gegenereerd.",
     "authkey": "Inlogcode",
-    "helpAuthkey": "Mediola-autoriteitssleutel"
+    "helpAuthkey": "Mediola-autoriteitssleutel",
+    "mediolaV5orHigher": "probeer de cmd te gebruiken en niet de opdracht.",
+    "helpMediolaV5orHigher": "het lijkt erop dat Mediola V5 ook een cmd-gebruik heeft. De API houdt hier niet rekening mee."
 }

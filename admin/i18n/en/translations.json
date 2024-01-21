@@ -20,5 +20,7 @@
     "pullData": "read status from Mediola",
     "helpPullData": "Use only when events are not received.",
     "pullDataInterval": "timespan for pull in minutes",
-    "helpPullDataInterval": "How often the request to the mediola is generated."
+    "helpPullDataInterval": "How often the request to the mediola is generated.",
+    "mediolaV5orHigher": "try to use the cmd and not command.",
+    "helpMediolaV5orHigher": "looks like, that mediola V5 have also a cmd usage. The API is not metion this."
 }

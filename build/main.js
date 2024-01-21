@@ -56,37 +56,98 @@ class MediolaGateway extends utils.Adapter {
   }
   genURL() {
     let retVal = "";
+    let commandType = "command";
+    if (this.config.mediolaV5orHigher === true) {
+      commandType = "cmd";
+    }
     if (this.config.username === "") {
       if (this.config.auth === "") {
-        retVal = "http://" + foundIpAddress + "/command?auth=" + this.config.auth + "&";
+        retVal = "http://" + foundIpAddress + "/" + commandType + "?";
       } else {
-        retVal = "http://" + foundIpAddress + "/command?";
+        retVal = "http://" + foundIpAddress + "/" + commandType + "?auth=" + this.config.auth + "&";
       }
     } else {
-      retVal = "http://" + foundIpAddress + "/command?XC_USER=" + this.config.username + "&XC_PASS=" + this.config.password + "&";
+      retVal = "http://" + foundIpAddress + "/" + commandType + "?XC_USER=" + this.config.username + "&XC_PASS=" + this.config.password + "&";
     }
     return retVal;
   }
+  testResponse(response) {
+    let successfull = false;
+    try {
+      if (response.data.toString().startsWith("{XC_SUC}")) {
+        successfull = true;
+      }
+    } catch (error) {
+      this.log.debug("response.data.toString failed");
+    }
+    try {
+      if (JSON.stringify(response.data).startsWith('{"XC_SUC"')) {
+        successfull = true;
+      }
+    } catch (error) {
+      this.log.debug("JSON.stringify(response.data) failed");
+    }
+    if (successfull === false) {
+      try {
+        this.log.error("JSON response cmd: " + JSON.stringify(response.data));
+      } catch (error) {
+        this.log.debug("log error print failed json");
+      }
+      try {
+        this.log.error("text response command: " + response.data.toString());
+      } catch (error) {
+        this.log.debug("log error print failed to string");
+      }
+    }
+    return successfull;
+  }
   async readAllSystemVars(timerRead) {
     this.log.debug(
-      "validMediola: " + validMediolaFound + " sysvarInti: " + sysvarInit + " timerRead: " + timerRead
+      "validMediola: " + validMediolaFound + " sysvarInti: " + sysvarInit + " timerRead: " + timerRead + " cmd " + this.config.mediolaV5orHigher + " pull " + this.config.pullData
     );
     if (validMediolaFound && !sysvarInit || timerRead) {
       sysvarInit = true;
       let reqUrl = this.genURL() + "XC_FNC=getstates";
       reqUrl = encodeURI(reqUrl);
+      this.log.debug(reqUrl);
       import_axios.default.get(reqUrl).then((res) => {
-        this.log.debug(res.data);
+        this.log.debug(JSON.stringify(res.data));
+        let jsonData = null;
+        let validJsonData = false;
         if (res.data.toString().startsWith("{XC_SUC}")) {
-          this.log.debug("mediola device found data: " + res.data);
+          jsonData = JSON.parse(res.data.substring(8));
+          validJsonData = true;
+        } else if (JSON.stringify(res.data).startsWith('{"XC_SUC":[')) {
+          jsonData = res.data.XC_SUC;
+          validJsonData = true;
+        } else {
+          jsonData = [];
+        }
+        if (validJsonData) {
           try {
-            const jsonData = JSON.parse(res.data.substring(8));
+            this.log.debug("mediola device found data: " + JSON.stringify(jsonData));
             if (isMediolaSysVarArray(jsonData)) {
               if (jsonData.length > 0) {
                 for (let index = 0; index < jsonData.length; index++) {
                   const element = jsonData[index];
                   this.log.debug(JSON.stringify(element));
-                  if (this.validName(element.adr)) {
+                  if (element.type === "TASK") {
+                    const taskId = element.id;
+                    const taskActive = element.active;
+                    const objName = "TASK" + taskId;
+                    this.setObjectNotExists("state." + objName, {
+                      type: "state",
+                      common: {
+                        name: "TASK " + taskId,
+                        type: "boolean",
+                        role: "text",
+                        read: true,
+                        write: false
+                      },
+                      native: {}
+                    });
+                    this.setState("state." + objName, { val: taskActive, ack: true });
+                  } else if (this.validName(element.adr)) {
                     let objState = "";
                     if (element.type === "WR") {
                       const objName = element.type + element.adr;
@@ -208,6 +269,26 @@ class MediolaGateway extends utils.Adapter {
                         native: {}
                       });
                       this.setState("state." + objName, { val: element.state, ack: true });
+                    } else if (element.type === "HM") {
+                      if (JSON.stringify(element.state) != "{}") {
+                        const objName = "homematic." + element.adr;
+                        const hmState = JSON.parse(JSON.stringify(element.state));
+                        if ("state" in hmState) {
+                          this.log.debug(JSON.stringify(hmState.state));
+                          this.setObjectNotExists(objName, {
+                            type: "state",
+                            common: {
+                              name: "HM device with state",
+                              type: "string",
+                              role: "text",
+                              read: true,
+                              write: true
+                            },
+                            native: {}
+                          });
+                          this.setState(objName, { val: hmState.state, ack: true });
+                        }
+                      }
                     } else {
                       const objName = "sysvars.id" + element.adr;
                       const description = "sysvar" + element.adr;
@@ -233,13 +314,13 @@ class MediolaGateway extends utils.Adapter {
                 }
               }
             } else {
-              this.log.error("json format not known:" + res.data.substring(8));
+              this.log.error("json format not known:" + JSON.stringify(jsonData));
             }
           } catch (error) {
-            this.log.error("json format invalid:" + res.data.substring(8));
+            this.log.error("json format invalid:" + JSON.stringify(jsonData));
           }
         } else {
-          this.log.error("mediola device rejected the request: " + res.data);
+          this.log.error("mediola device rejected the request: " + res.data.toString());
         }
       }).catch((error) => {
         sysvarInit = false;
@@ -296,8 +377,12 @@ class MediolaGateway extends utils.Adapter {
       } else {
         this.log.info("find by ip: " + this.config.findByIp);
         if (this.config.findByIp == true) {
-          waitingForIpDevice = true;
+          waitingForIpDevice = false;
+          validMediolaFound = true;
           foundIpAddress = this.config.ip;
+          this.readAllSystemVars(false);
+          this.refreshStates("onReady");
+          this.setState("info.connection", true, true);
           this.log.info("with ip: " + foundIpAddress);
         } else {
           this.log.error("no valid detection method defined");
@@ -347,6 +432,7 @@ class MediolaGateway extends utils.Adapter {
             } else if (jsonData.type === "ER") {
               this.log.debug(JSON.stringify(jsonData));
             } else if (jsonData.type === "HM") {
+              this.log.debug(JSON.stringify(jsonData));
             } else {
               this.log.debug("data type not known: " + jsonData.type);
               this.log.debug(JSON.stringify(jsonData));
@@ -474,6 +560,7 @@ class MediolaGateway extends utils.Adapter {
     this.subscribeStates("action.DY*");
     this.subscribeStates("action.RT*");
     this.subscribeStates("action.ER*");
+    this.subscribeStates("homematic.*");
   }
   onUnload(callback) {
     try {
@@ -496,6 +583,19 @@ class MediolaGateway extends utils.Adapter {
           dataName = dataNameParts[3];
         } else if (dataNameParts.length === 3) {
           dataName = dataNameParts[2];
+        } else if (dataNameParts.length > 4) {
+          if (dataNameParts[2] === "homematic") {
+            subfolder = dataNameParts[2];
+            dataName = dataNameParts[3];
+            for (let index = 4; index < dataNameParts.length; index++) {
+              dataName = dataName + "." + dataNameParts[index];
+            }
+          }
+        } else {
+          this.log.debug("len: " + dataNameParts.length);
+          for (let index = 0; index < dataNameParts.length; index++) {
+            this.log.debug(index.toString() + " = " + dataNameParts[index]);
+          }
         }
         if (dataName === "sendIrData") {
           this.log.debug("try send: " + state.val);
@@ -504,8 +604,8 @@ class MediolaGateway extends utils.Adapter {
             reqUrl = encodeURI(reqUrl);
             import_axios.default.get(reqUrl).then((res) => {
               this.log.debug(res.data);
-              if (res.data.toString().includes("XC_SUC") === false) {
-                this.log.error("mediola device rejected the command: " + state.val);
+              if (this.testResponse(res) === false) {
+                this.log.error("sendIrData failed");
               }
             }).catch((error) => {
               this.log.error("mediola device not reached by sending IR data");
@@ -519,8 +619,8 @@ class MediolaGateway extends utils.Adapter {
             reqUrl = encodeURI(reqUrl);
             import_axios.default.get(reqUrl).then((res) => {
               this.log.debug(res.data);
-              if (res.data.toString().includes("XC_SUC") === false) {
-                this.log.error("mediola device rejected the command: " + state.val);
+              if (this.testResponse(res) === false) {
+                this.log.error("sendRfData failed.");
               }
             }).catch((error) => {
               this.log.error("mediola device not reached by sending rf data");
@@ -564,10 +664,8 @@ class MediolaGateway extends utils.Adapter {
               reqUrl = encodeURI(reqUrl);
               import_axios.default.get(reqUrl).then((res) => {
                 this.log.debug(res.data);
-                if (res.data.toString().includes("XC_SUC") === false) {
-                  this.log.error(
-                    "mediola device rejected the command: " + state.val + " response: " + res.data
-                  );
+                if (this.testResponse(res) === false) {
+                  this.log.error("WR data send failed");
                 }
               }).catch((error) => {
                 this.log.error("mediola device not reached by sending SC data to WR");
@@ -595,10 +693,8 @@ class MediolaGateway extends utils.Adapter {
               reqUrl = encodeURI(reqUrl);
               import_axios.default.get(reqUrl).then((res) => {
                 this.log.debug(res.data);
-                if (res.data.toString().includes("XC_SUC") === false) {
-                  this.log.error(
-                    "mediola device rejected the command: " + state.val + " response: " + res.data
-                  );
+                if (this.testResponse(res) === false) {
+                  this.log.error("BK data send failed");
                 }
               }).catch((error) => {
                 this.log.error("mediola device not reached by sending SC data to BK");
@@ -626,10 +722,8 @@ class MediolaGateway extends utils.Adapter {
               reqUrl = encodeURI(reqUrl);
               import_axios.default.get(reqUrl).then((res) => {
                 this.log.debug(res.data);
-                if (res.data.toString().includes("XC_SUC") === false) {
-                  this.log.error(
-                    "mediola device rejected the command: " + state.val + " response: " + res.data
-                  );
+                if (this.testResponse(res) === false) {
+                  this.log.error("RT data send failed");
                 }
               }).catch((error) => {
                 this.log.error("mediola device not reached by sending SC data to RT");
@@ -658,10 +752,8 @@ class MediolaGateway extends utils.Adapter {
                 reqUrl = encodeURI(reqUrl);
                 import_axios.default.get(reqUrl).then((res) => {
                   this.log.debug(res.data);
-                  if (res.data.toString().includes("XC_SUC") === false) {
-                    this.log.error(
-                      "mediola device rejected the command: " + state.val + " response: " + res.data
-                    );
+                  if (this.testResponse(res) === false) {
+                    this.log.error("NY data send failed");
                   }
                 }).catch((error) => {
                   this.log.error("mediola device not reached by sending SC data to NY");
@@ -693,10 +785,8 @@ class MediolaGateway extends utils.Adapter {
                 reqUrl = encodeURI(reqUrl);
                 import_axios.default.get(reqUrl).then((res) => {
                   this.log.debug(res.data);
-                  if (res.data.toString().includes("XC_SUC") === false) {
-                    this.log.error(
-                      "mediola device rejected the command: " + state.val + " response: " + res.data
-                    );
+                  if (this.testResponse(res) === false) {
+                    this.log.error("DY data send failed");
                   }
                 }).catch((error) => {
                   this.log.error("mediola device not reached by sending SC data to DY");
@@ -729,10 +819,8 @@ class MediolaGateway extends utils.Adapter {
                 import_axios.default.get(reqUrl).then((res) => {
                   this.log.debug(res.data);
                   this.log.debug(reqUrl);
-                  if (res.data.toString().includes("XC_SUC") === false) {
-                    this.log.error(
-                      "mediola device rejected the command: " + state.val + " response: " + res.data
-                    );
+                  if (this.testResponse(res) === false) {
+                    this.log.error("ER data send failed");
                   }
                 }).catch((error) => {
                   this.log.error("mediola device not reached by sending SC data to ER");
@@ -745,8 +833,26 @@ class MediolaGateway extends utils.Adapter {
           } else {
             this.log.debug("Wrong subfolder: " + subfolder + "from device: " + dataName);
           }
+        } else if (subfolder === "homematic") {
+          this.log.debug("got hm event: " + JSON.stringify(state));
+          if (validMediolaFound) {
+            let reqUrl = this.genURL() + "XC_FNC=SendSC&type=HM&address=" + dataName + "&data=" + state.val;
+            reqUrl = encodeURI(reqUrl);
+            import_axios.default.get(reqUrl).then((res) => {
+              this.log.debug(res.data);
+              this.log.debug(JSON.stringify(res.data));
+              this.log.debug(reqUrl);
+              if (this.testResponse(res) === false) {
+                this.log.error("homematic data send failed");
+              }
+            }).catch((error) => {
+              this.log.error("mediola device not reached by sending HM data");
+              this.log.error(error);
+            });
+          }
         } else {
           this.log.debug("got unknown event: " + JSON.stringify(state));
+          this.log.debug("got unknown name: " + dataName);
         }
       }
     } else {

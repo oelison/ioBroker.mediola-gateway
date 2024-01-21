@@ -20,5 +20,7 @@
     "pullDataInterval": "проміжок часу для витягування в хвилинах",
     "helpPullDataInterval": "Як часто генерується запит до медіоли.",
     "authkey": "Authkey",
-    "helpAuthkey": "Ключ повноважень Mediola"
+    "helpAuthkey": "Ключ повноважень Mediola",
+    "mediolaV5orHigher": "спробуйте використовувати cmd, а не команду.",
+    "helpMediolaV5orHigher": "схоже, що mediola V5 також використовує cmd. API цього не зазначає."
 }

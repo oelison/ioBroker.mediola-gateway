@@ -20,5 +20,7 @@
     "pullDataInterval": "拉动时间跨度（分钟）",
     "helpPullDataInterval": "向 mediola 发出请求的频率。",
     "authkey": "授权键",
-    "helpAuthkey": "Mediola 权限密钥"
+    "helpAuthkey": "Mediola 权限密钥",
+    "mediolaV5orHigher": "尝试使用cmd而不是命令。",
+    "helpMediolaV5orHigher": "看起来，mediola V5 也有 cmd 用法。 API中没有提及这一点。"
 }

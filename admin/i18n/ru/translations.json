@@ -20,5 +20,7 @@
     "pullDataInterval": "время для тяги в минутах",
     "helpPullDataInterval": "Как часто генерируется запрос к медиоле.",
     "authkey": "Ключ аутентификации",
-    "helpAuthkey": "Ключ авторизации Медиола"
+    "helpAuthkey": "Ключ авторизации Медиола",
+    "mediolaV5orHigher": "попробуйте использовать cmd, а не команду.",
+    "helpMediolaV5orHigher": "Похоже, что в mediola V5 также используется cmd. API этого не учитывает."
 }

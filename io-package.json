@@ -173,7 +173,8 @@
         "username": "",
         "password": "",
         "auth": "",
-        "pullData": false
+        "pullData": false,
+        "mediolaV5orHigher": false
     },
     "objects": [],
     "instanceObjects": [
