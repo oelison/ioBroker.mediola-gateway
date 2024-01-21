@@ -58,8 +58,7 @@ DISCLAIMER All product and company names or logos are Trademarks™ or Registere
     Placeholder for the next version (at the beginning of the line):
     ### **WORK IN PROGRESS**
 -->
-
-### **WORK IN PROGRESS**
+### 1.1.0 (2024-01-21)
 
 -   RT (Somfy) system added (Thanks to Falk)
 -   DY (Nobily) system added (Thanks to BlindlyBlinds)
