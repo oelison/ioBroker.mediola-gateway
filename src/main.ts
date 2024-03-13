@@ -894,8 +894,12 @@ class MediolaGateway extends utils.Adapter {
                                 direction = "44";
                             } else if (state.val === "3") {
                                 direction = "00";
+                            } else if (state.val === "4") {
+                                direction = "55";
                             } else {
-                                this.log.error("only 1 (up), 2 (down) or 3 (stop) is allowed. For safety do a stop");
+                                this.log.error(
+                                    "only 1 (up), 2 (down), 3 (stop) or 4 (stop 55) is allowed. For safety do a stop",
+                                );
                             }
                             if (validMediolaFound) {
                                 let reqUrl = this.genURL() + "XC_FNC=SendSC&type=NY&data=" + actorId + direction;
