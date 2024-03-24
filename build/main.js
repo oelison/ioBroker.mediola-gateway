@@ -269,6 +269,34 @@ class MediolaGateway extends utils.Adapter {
                         native: {}
                       });
                       this.setState("state." + objName, { val: element.state, ack: true });
+                    } else if (element.type === "DY2") {
+                      const objName = element.type + element.adr;
+                      if (element.adr.length != 8) {
+                        this.log.error("this DY2 element has not 8 chars: " + element.adr);
+                      }
+                      this.setObjectNotExists("state." + objName, {
+                        type: "state",
+                        common: {
+                          name: "2DY " + element.adr,
+                          type: "string",
+                          role: "text",
+                          read: true,
+                          write: false
+                        },
+                        native: {}
+                      });
+                      this.setObjectNotExists("action." + objName, {
+                        type: "state",
+                        common: {
+                          name: "2DY " + element.adr + " 1=up, 2=down, 3=stop 10,20,...,90",
+                          type: "string",
+                          role: "text",
+                          read: true,
+                          write: true
+                        },
+                        native: {}
+                      });
+                      this.setState("state." + objName, { val: element.state, ack: true });
                     } else if (element.type === "HM") {
                       if (JSON.stringify(element.state) != "{}") {
                         const objName = "homematic." + element.adr;
@@ -429,6 +457,8 @@ class MediolaGateway extends utils.Adapter {
               this.log.debug(JSON.stringify(jsonData));
             } else if (jsonData.type === "DY") {
               this.log.debug(JSON.stringify(jsonData));
+            } else if (jsonData.type === "DY2") {
+              this.log.debug(JSON.stringify(jsonData));
             } else if (jsonData.type === "ER") {
               this.log.debug(JSON.stringify(jsonData));
             } else if (jsonData.type === "HM") {
@@ -558,6 +588,7 @@ class MediolaGateway extends utils.Adapter {
     this.subscribeStates("action.BK*");
     this.subscribeStates("action.NY*");
     this.subscribeStates("action.DY*");
+    this.subscribeStates("action.2DY*");
     this.subscribeStates("action.RT*");
     this.subscribeStates("action.ER*");
     this.subscribeStates("homematic.*");
@@ -799,6 +830,55 @@ class MediolaGateway extends utils.Adapter {
               }
             } else {
               this.log.error("DY id is not 8 chars long.");
+            }
+          } else {
+            this.log.debug("Wrong subfolder: " + subfolder + "from device: " + dataName);
+          }
+        } else if (dataName.startsWith("2DY")) {
+          if (subfolder === "action") {
+            const actorId = dataName.replace("2DY", "");
+            if (actorId.length === 8) {
+              let direction = "03";
+              let cmdType = "";
+              let value = 0;
+              if (state.val !== null) {
+                const valueString = state.val.toString(16);
+                if (valueString.length < 3) {
+                  value = parseInt(String(state.val));
+                }
+              }
+              this.log.debug(value.toString());
+              if (state.val === "1") {
+                direction = "01";
+              } else if (state.val === "2") {
+                direction = "02";
+              } else if (state.val === "3") {
+                direction = "03";
+              } else if (value % 10 === 0 && value < 91 && value > 9) {
+                cmdType = "40";
+                direction = value.toString(16);
+                direction = direction.padStart(2, "0");
+              } else {
+                this.log.error(
+                  "only 1 (up), 2 (down) or 3 (stop) is allowed or value from 10 to 90 in 10 steps. For safety do a stop"
+                );
+              }
+              if (validMediolaFound) {
+                let reqUrl = this.genURL() + "XC_FNC=SendSC&type=DY2&data=01" + actorId + cmdType + direction;
+                reqUrl = encodeURI(reqUrl);
+                this.log.debug(reqUrl);
+                import_axios.default.get(reqUrl).then((res) => {
+                  this.log.debug(res.data);
+                  if (this.testResponse(res) === false) {
+                    this.log.error("DY data send failed");
+                  }
+                }).catch((error) => {
+                  this.log.error("mediola device not reached by sending SC data to DY2");
+                  this.log.error(error);
+                });
+              }
+            } else {
+              this.log.error("DY2 id is not 8 chars long.");
             }
           } else {
             this.log.debug("Wrong subfolder: " + subfolder + "from device: " + dataName);
