@@ -14,6 +14,10 @@ var __copyProps = (to, from, except, desc) => {
   return to;
 };
 var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__getProtoOf(mod)) : {}, __copyProps(
+  // If the importer is in node compatibility mode or this is not an ESM
+  // file that has been converted to a CommonJS file using a Babel-
+  // compatible transform (i.e. "__esModule" has not been set), then set
+  // "default" to the CommonJS "module.exports" for node compatibility.
   isNodeMode || !mod || !mod.__esModule ? __defProp(target, "default", { value: mod, enumerable: true }) : target,
   mod
 ));
@@ -46,6 +50,9 @@ class MediolaGateway extends utils.Adapter {
     this.on("stateChange", this.onStateChange.bind(this));
     this.on("unload", this.onUnload.bind(this));
   }
+  /**
+   * check for forbidden chars
+   */
   validName(Name) {
     const CheckName = Name.replace(this.FORBIDDEN_CHARS, "_");
     if (CheckName == Name) {
@@ -54,6 +61,9 @@ class MediolaGateway extends utils.Adapter {
       return false;
     }
   }
+  /**
+   * create URL
+   */
   genURL() {
     let retVal = "";
     let commandType = "command";
@@ -71,6 +81,11 @@ class MediolaGateway extends utils.Adapter {
     }
     return retVal;
   }
+  /** evaluate if the response data is successfull
+   * it looks like that cmd returns a json and command a text
+   * actual documentation of the API do not explain this
+   * workaround to test both every time
+   */
   testResponse(response) {
     let successfull = false;
     try {
@@ -101,6 +116,10 @@ class MediolaGateway extends utils.Adapter {
     }
     return successfull;
   }
+  /**
+   * Is called when valid mediola found
+   * read all existing SysVars
+   */
   async readAllSystemVars(timerRead) {
     this.log.debug(
       "validMediola: " + validMediolaFound + " sysvarInti: " + sysvarInit + " timerRead: " + timerRead + " cmd " + this.config.mediolaV5orHigher + " pull " + this.config.pullData
@@ -381,6 +400,68 @@ class MediolaGateway extends utils.Adapter {
       }
     }
   }
+  // lern call
+  // http://ipaddress/command?XC_FNC=Learn
+  // set calls
+  // http://ipaddress/command?XC_FNC=setVar&id=01&type=ONOFF&value=off
+  // http://ipaddress/command?XC_FNC=setVar&id=01&type=ONOFF&value=on
+  // http://ipaddress/command?XC_FNC=setVar&id=02&type=int&value=00000007
+  // http://ipaddress/command?XC_FNC=setVar&id=03&type=float&value=31323334
+  // http://ipaddress/command?XC_FNC=setVar&id=04&type=string&value=abcdefghij
+  // events
+  // {XC_EVT}{"type":"SV","data":"B:01:off"}
+  // {XC_EVT}{"type":"SV","data":"B:01:on"}
+  // {XC_EVT}{"type":"SV","data":"I:02:00000007"}
+  // {XC_EVT}{"type":"SV","data":"F:03:432"}
+  // {XC_EVT}{"type":"SV","data":"S:04:abcdefghij"}
+  // getstates Mediola
+  // http://ipaddress/command?XC_FNC=getstates
+  // {XC_SUC}[
+  //    {"type":"ONOFF","adr":"01","state":"on"},
+  //    {"type":"INT","adr":"02","state":"00000007"},
+  //    {"type":"FLOAT","adr":"03","state":"31323334"},
+  //    {"type":"STRING","adr":"04","state":"abcdefghij"}]
+  // getstates Nobily
+  // {XC_SUC}[
+  //    {"type":"BK","sid":"01","adr":"123456","config":"","state":""}]
+  // getstates WIR
+  // {XC_SUC}[
+  //      {"type":"EVENT","adr":"FF","state":"0"},
+  //      {"type":"WR","sid":"01","adr":"xaaaaaax","config":"F000050528:1:7340:6B53","state":"013300","deviceType":"01"}]
+  // /info?at=46b385e0a2d610044569ff7a031324a9
+  // {"XC_SUC":
+  //  {   "name":"WIR-CONNECT V6",
+  //      "mhv":"XN II",
+  //      "mfv":"1.2.10-3896c366",
+  //      "msv":"1.16.0",
+  //      "hwv":"C3",
+  //      "vid":"000A",
+  //      "mem":200000,
+  //      "ip":"xxx.xxx.xxx.xxx",
+  //      "sn":"xxx.xxx.xxx.xxx",
+  //      "gw":"xxx.xxx.xxx.xxx",
+  //      "dns":"xxx.xxx.xxx.xxx",
+  //      "mac":"40-66-7a-00-86-d4",
+  //      "ntp":"xxx.xxx.xxx.xxx",
+  //      "start":1680028537,
+  //      "time":1689705023,
+  //      "loc":"21020D0087",
+  //      "serial":"230400,8N1",
+  //      "io":"AA-E0",
+  //      "cfg":"BF",
+  //      "server":"ccs.wir-elektronik-cloud.de:80",
+  //      "locked":false,
+  //      "sid":"xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+  //      "wifi":"HITCS_mobile",
+  //      "rssi":-60}}
+  // set rollo
+  // /cmd?XC_FNC=SendSC&type=WR&data=01xaaaaaax0101 up
+  // /cmd?XC_FNC=SendSC&type=WR&data=01xaaaaaax0102 down
+  // /cmd?XC_FNC=SendSC&type=WR&data=01xaaaaaax0103 stop
+  // /cmd?XC_FNC=SendSC&type=WR&data=01xaaaaaax0107pp pp=percent
+  /**
+   * Is called when databases are connected and adapter received configuration.
+   */
   async onReady() {
     this.setState("info.connection", false, true);
     this.extendObject("action", {
@@ -593,6 +674,9 @@ class MediolaGateway extends utils.Adapter {
     this.subscribeStates("action.ER*");
     this.subscribeStates("homematic.*");
   }
+  /**
+   * Is called when adapter shuts down - callback has to be called under any circumstances!
+   */
   onUnload(callback) {
     try {
       inSocket.close();
@@ -602,6 +686,9 @@ class MediolaGateway extends utils.Adapter {
       callback();
     }
   }
+  /**
+   * Is called if a subscribed state changes
+   */
   onStateChange(id, state) {
     if (state) {
       this.log.debug(`state ${id} changed: ${state.val} (ack = ${state.ack})`);

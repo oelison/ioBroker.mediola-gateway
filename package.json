@@ -11,7 +11,8 @@
   "keywords": [
     "media",
     "gateway",
-    "mediola"
+    "mediola",
+    "ioBroker"
   ],
   "repository": {
     "type": "git",
@@ -21,7 +22,7 @@
     "node": ">= 18"
   },
   "dependencies": {
-    "@iobroker/adapter-core": "^3.0.3",
+    "@iobroker/adapter-core": "^3.1.6",
     "axios": "^1.5.0"
   },
   "devDependencies": {
