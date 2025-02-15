@@ -1,6 +1,9 @@
 {
     "i18n": true,
     "type": "tabs",
+    "tabsStyle": {
+        "width": "calc(100% - 100px)"
+    },
     "items": {
         "_options": {
             "type": "panel",
@@ -8,92 +11,114 @@
             "items": {
                 "autoDetect": {
                     "type": "checkbox",
+                    "xs": 12,
                     "sm": 12,
                     "md": 6,
-                    "lg": 6,
+                    "lg": 4,
+                    "xl": 4,
                     "label": "autoDetect",
                     "help": "helpAutoDetect"
                 },
                 "findByMac": {
                     "newLine": true,
                     "type": "checkbox",
+                    "xs": 12,
                     "sm": 12,
                     "md": 6,
-                    "lg": 6,
+                    "lg": 4,
+                    "xl": 4,
                     "label": "findByMac",
                     "help": "helpFindByMac"
                 },
                 "mac": {
                     "type": "text",
+                    "xs": 12,
                     "sm": 12,
                     "md": 6,
-                    "lg": 6,
+                    "lg": 4,
+                    "xl": 4,
                     "label": "mac",
                     "help": "helpMac"
                 },
                 "findByIp": {
                     "newLine": true,
                     "type": "checkbox",
+                    "xs": 12,
                     "sm": 12,
                     "md": 6,
-                    "lg": 6,
+                    "lg": 4,
+                    "xl": 4,
                     "label": "findByIp",
                     "help": "helpFindByIp"
                 },
                 "ip": {
                     "type": "text",
+                    "xs": 12,
                     "sm": 12,
                     "md": 6,
-                    "lg": 6,
+                    "lg": 4,
+                    "xl": 4,
                     "label": "ip",
                     "help": "helpIp"
                 },
                 "username": {
                     "type": "text",
+                    "xs": 12,
                     "sm": 12,
                     "md": 6,
-                    "lg": 6,
+                    "lg": 4,
+                    "xl": 4,
                     "label": "username",
                     "help": "helpUsername"
                 },
                 "password": {
                     "type": "password",
+                    "xs": 12,
                     "sm": 12,
                     "md": 6,
-                    "lg": 6,
+                    "lg": 4,
+                    "xl": 4,
                     "label": "password",
                     "help": "helpPassword"
                 },
                 "auth": {
                     "type": "password",
+                    "xs": 12,
                     "sm": 12,
                     "md": 6,
-                    "lg": 6,
+                    "lg": 4,
+                    "xl": 4,
                     "label": "authkey",
                     "help": "helpAuthkey"
                 },
                 "pullData": {
                     "newLine": true,
                     "type": "checkbox",
+                    "xs": 12,
                     "sm": 12,
                     "md": 6,
-                    "lg": 6,
+                    "lg": 4,
+                    "xl": 4,
                     "label": "pullData",
                     "help": "helpPullData"
                 },
                 "pullDataInterval": {
                     "type": "number",
+                    "xs": 12,
                     "sm": 12,
                     "md": 6,
-                    "lg": 6,
+                    "lg": 4,
+                    "xl": 4,
                     "label": "pullDataInterval",
                     "help": "helpPullDataInterval"
                 },
                 "mediolaV5orHigher": {
                     "type": "checkbox",
+                    "xs": 12,
                     "sm": 12,
                     "md": 6,
-                    "lg": 6,
+                    "lg": 4,
+                    "xl": 4,
                     "label": "mediolaV5orHigher",
                     "help": "helpMediolaV5orHigher"
                 }
