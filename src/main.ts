@@ -99,6 +99,9 @@ class MediolaGateway extends utils.Adapter {
                 successfull = true;
             }
         } catch (error) {
+            if (error instanceof Error) {
+                this.log.debug(error.message);
+            }
             this.log.debug("response.data.toString failed");
         }
         try {
@@ -106,17 +109,26 @@ class MediolaGateway extends utils.Adapter {
                 successfull = true;
             }
         } catch (error) {
+            if (error instanceof Error) {
+                this.log.debug(error.message);
+            }
             this.log.debug("JSON.stringify(response.data) failed");
         }
         if (successfull === false) {
             try {
                 this.log.error("JSON response cmd: " + JSON.stringify(response.data));
             } catch (error) {
+                if (error instanceof Error) {
+                    this.log.debug(error.message);
+                }
                 this.log.debug("log error print failed json");
             }
             try {
                 this.log.error("text response command: " + response.data.toString());
             } catch (error) {
+                if (error instanceof Error) {
+                    this.log.debug(error.message);
+                }
                 this.log.debug("log error print failed to string");
             }
         }
@@ -385,6 +397,9 @@ class MediolaGateway extends utils.Adapter {
                                 this.log.error("json format not known:" + JSON.stringify(jsonData));
                             }
                         } catch (error) {
+                            if (error instanceof Error) {
+                                this.log.error(error.message);
+                            }
                             this.log.error("json format invalid:" + JSON.stringify(jsonData));
                         }
                     } else {
@@ -393,8 +408,10 @@ class MediolaGateway extends utils.Adapter {
                 })
                 .catch((error) => {
                     sysvarInit = false; // retry next time
+                    if (error instanceof Error) {
+                        this.log.error(error.message);
+                    }
                     this.log.error("mediola device not reached by getting sys vars");
-                    this.log.error(error);
                 });
         } else {
             this.log.debug("recalled with no effect");
@@ -588,6 +605,9 @@ class MediolaGateway extends utils.Adapter {
                         this.log.error("json format not known:" + message);
                     }
                 } catch (error) {
+                    if (error instanceof Error) {
+                        this.log.error(error.message);
+                    }
                     this.log.error("json format invalid:" + message);
                 }
             } else {
@@ -728,7 +748,10 @@ class MediolaGateway extends utils.Adapter {
             inSocket.close();
             outSocket.close();
             callback();
-        } catch (e) {
+        } catch (error) {
+            if (error instanceof Error) {
+                this.log.debug(error.message);
+            }
             callback();
         }
     }
@@ -779,7 +802,9 @@ class MediolaGateway extends utils.Adapter {
                             })
                             .catch((error) => {
                                 this.log.error("mediola device not reached by sending IR data");
-                                this.log.error(error);
+                                if (error instanceof Error) {
+                                    this.log.error(error.message);
+                                }
                             });
                     }
                 } else if (dataName === "sendRfData") {
@@ -797,7 +822,9 @@ class MediolaGateway extends utils.Adapter {
                             })
                             .catch((error) => {
                                 this.log.error("mediola device not reached by sending rf data");
-                                this.log.error(error);
+                                if (error instanceof Error) {
+                                    this.log.error(error.message);
+                                }
                             });
                     }
                 } else if (dataName.startsWith("id")) {
@@ -846,7 +873,9 @@ class MediolaGateway extends utils.Adapter {
                                 })
                                 .catch((error) => {
                                     this.log.error("mediola device not reached by sending SC data to WR");
-                                    this.log.error(error);
+                                    if (error instanceof Error) {
+                                        this.log.error(error.message);
+                                    }
                                 });
                         }
                     } else {
@@ -878,7 +907,9 @@ class MediolaGateway extends utils.Adapter {
                                 })
                                 .catch((error) => {
                                     this.log.error("mediola device not reached by sending SC data to BK");
-                                    this.log.error(error);
+                                    if (error instanceof Error) {
+                                        this.log.error(error.message);
+                                    }
                                 });
                         }
                     } else {
@@ -910,7 +941,9 @@ class MediolaGateway extends utils.Adapter {
                                 })
                                 .catch((error) => {
                                     this.log.error("mediola device not reached by sending SC data to RT");
-                                    this.log.error(error);
+                                    if (error instanceof Error) {
+                                        this.log.error(error.message);
+                                    }
                                 });
                         }
                     } else {
@@ -947,7 +980,9 @@ class MediolaGateway extends utils.Adapter {
                                     })
                                     .catch((error) => {
                                         this.log.error("mediola device not reached by sending SC data to NY");
-                                        this.log.error(error);
+                                        if (error instanceof Error) {
+                                            this.log.error(error.message);
+                                        }
                                     });
                             }
                         } else {
@@ -983,7 +1018,9 @@ class MediolaGateway extends utils.Adapter {
                                     })
                                     .catch((error) => {
                                         this.log.error("mediola device not reached by sending SC data to DY");
-                                        this.log.error(error);
+                                        if (error instanceof Error) {
+                                            this.log.error(error.message);
+                                        }
                                     });
                             }
                         } else {
@@ -1037,7 +1074,9 @@ class MediolaGateway extends utils.Adapter {
                                     })
                                     .catch((error) => {
                                         this.log.error("mediola device not reached by sending SC data to DY2");
-                                        this.log.error(error);
+                                        if (error instanceof Error) {
+                                            this.log.error(error.message);
+                                        }
                                     });
                             }
                         } else {
@@ -1074,7 +1113,9 @@ class MediolaGateway extends utils.Adapter {
                                     })
                                     .catch((error) => {
                                         this.log.error("mediola device not reached by sending SC data to ER");
-                                        this.log.error(error);
+                                        if (error instanceof Error) {
+                                            this.log.error(error.message);
+                                        }
                                     });
                             }
                         } else {
@@ -1100,7 +1141,9 @@ class MediolaGateway extends utils.Adapter {
                             })
                             .catch((error) => {
                                 this.log.error("mediola device not reached by sending HM data");
-                                this.log.error(error);
+                                if (error instanceof Error) {
+                                    this.log.error(error.message);
+                                }
                             });
                     }
                 } else {
