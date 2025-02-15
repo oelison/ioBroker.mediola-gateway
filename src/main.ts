@@ -49,14 +49,15 @@ class MediolaGateway extends utils.Adapter {
     }
     /**
      * check for forbidden chars
+     *
+     * @param Name test if name is valid for attribute
      */
     private validName(Name: string): boolean {
         const CheckName = Name.replace(this.FORBIDDEN_CHARS, "_");
         if (CheckName == Name) {
             return true;
-        } else {
-            return false;
         }
+        return false;
     }
     /**
      * create URL
@@ -69,28 +70,22 @@ class MediolaGateway extends utils.Adapter {
         }
         if (this.config.username === "") {
             if (this.config.auth === "") {
-                retVal = "http://" + foundIpAddress + "/" + commandType + "?";
+                retVal = `http://${foundIpAddress}/${commandType}?`;
             } else {
-                retVal = "http://" + foundIpAddress + "/" + commandType + "?auth=" + this.config.auth + "&";
+                retVal = `http://${foundIpAddress}/${commandType}?auth=${this.config.auth}&`;
             }
         } else {
-            retVal =
-                "http://" +
-                foundIpAddress +
-                "/" +
-                commandType +
-                "?XC_USER=" +
-                this.config.username +
-                "&XC_PASS=" +
-                this.config.password +
-                "&";
+            retVal = `http://${foundIpAddress}/${commandType}?XC_USER=${this.config.username}&XC_PASS=${this.config.password}&`;
         }
         return retVal;
     }
-    /** evaluate if the response data is successfull
+    /**
+     * evaluate if the response data is successfull
      * it looks like that cmd returns a json and command a text
      * actual documentation of the API do not explain this
      * workaround to test both every time
+     *
+     * @param response check for mediola response ok
      */
     private testResponse(response: axios.AxiosResponse): boolean {
         let successfull = false;
@@ -116,7 +111,7 @@ class MediolaGateway extends utils.Adapter {
         }
         if (successfull === false) {
             try {
-                this.log.error("JSON response cmd: " + JSON.stringify(response.data));
+                this.log.error(`JSON response cmd: ${JSON.stringify(response.data)}`);
             } catch (error) {
                 if (error instanceof Error) {
                     this.log.debug(error.message);
@@ -124,7 +119,7 @@ class MediolaGateway extends utils.Adapter {
                 this.log.debug("log error print failed json");
             }
             try {
-                this.log.error("text response command: " + response.data.toString());
+                this.log.error(`text response command: ${response.data.toString()}`);
             } catch (error) {
                 if (error instanceof Error) {
                     this.log.debug(error.message);
@@ -137,28 +132,21 @@ class MediolaGateway extends utils.Adapter {
     /**
      * Is called when valid mediola found
      * read all existing SysVars
+     *
+     * @param timerRead show where the call comes from
      */
-    private async readAllSystemVars(timerRead: boolean): Promise<void> {
+    private readAllSystemVars(timerRead: boolean): void {
         this.log.debug(
-            "validMediola: " +
-                validMediolaFound +
-                " sysvarInti: " +
-                sysvarInit +
-                " timerRead: " +
-                timerRead +
-                " cmd " +
-                this.config.mediolaV5orHigher +
-                " pull " +
-                this.config.pullData,
+            `validMediola: ${validMediolaFound} sysvarInti: ${sysvarInit} timerRead: ${timerRead} cmd ${this.config.mediolaV5orHigher} pull ${this.config.pullData}`,
         );
         if ((validMediolaFound && !sysvarInit) || timerRead) {
             sysvarInit = true;
-            let reqUrl = this.genURL() + "XC_FNC=getstates";
+            let reqUrl = `${this.genURL()}XC_FNC=getstates`;
             reqUrl = encodeURI(reqUrl);
             this.log.debug(reqUrl);
             axios
                 .get(reqUrl)
-                .then((res) => {
+                .then(async res => {
                     this.log.debug(JSON.stringify(res.data));
                     let jsonData = null;
                     let validJsonData = false;
@@ -174,7 +162,7 @@ class MediolaGateway extends utils.Adapter {
                     if (validJsonData) {
                         //this.log.debug("mediola device found data: " + res.data);
                         try {
-                            this.log.debug("mediola device found data: " + JSON.stringify(jsonData));
+                            this.log.debug(`mediola device found data: ${JSON.stringify(jsonData)}`);
                             if (isMediolaSysVarArray(jsonData)) {
                                 if (jsonData.length > 0) {
                                     for (let index = 0; index < jsonData.length; index++) {
@@ -185,11 +173,11 @@ class MediolaGateway extends utils.Adapter {
                                         if (element.type === "TASK") {
                                             const taskId = element.id;
                                             const taskActive = element.active;
-                                            const objName = "TASK" + taskId;
-                                            this.setObjectNotExists("state." + objName, {
+                                            const objName = `TASK${taskId}`;
+                                            await this.setObjectNotExists(`state.${objName}`, {
                                                 type: "state",
                                                 common: {
-                                                    name: "TASK " + taskId,
+                                                    name: `TASK ${taskId}`,
                                                     type: "boolean",
                                                     role: "text",
                                                     read: true,
@@ -197,18 +185,21 @@ class MediolaGateway extends utils.Adapter {
                                                 },
                                                 native: {},
                                             });
-                                            this.setState("state." + objName, { val: taskActive, ack: true });
+                                            await this.setState(`state.${objName}`, {
+                                                val: taskActive,
+                                                ack: true,
+                                            });
                                         } else if (this.validName(element.adr)) {
                                             let objState = "";
                                             if (element.type === "WR") {
                                                 const objName = element.type + element.adr;
                                                 if (element.adr.length != 8) {
-                                                    this.log.error("this WR element has not 8 chars: " + element.adr);
+                                                    this.log.error(`this WR element has not 8 chars: ${element.adr}`);
                                                 }
-                                                this.setObjectNotExists("state." + objName, {
+                                                await this.setObjectNotExists(`state.${objName}`, {
                                                     type: "state",
                                                     common: {
-                                                        name: "WIR " + element.adr,
+                                                        name: `WIR ${element.adr}`,
                                                         type: "number",
                                                         role: "text",
                                                         read: true,
@@ -216,10 +207,10 @@ class MediolaGateway extends utils.Adapter {
                                                     },
                                                     native: {},
                                                 });
-                                                this.setObjectNotExists("action." + objName, {
+                                                await this.setObjectNotExists(`action.${objName}`, {
                                                     type: "state",
                                                     common: {
-                                                        name: "WIR " + element.adr + " 1=up, 2=down, 3=stop",
+                                                        name: `WIR ${element.adr} 1=up, 2=down, 3=stop`,
                                                         type: "string",
                                                         role: "text",
                                                         read: true,
@@ -230,22 +221,28 @@ class MediolaGateway extends utils.Adapter {
                                                 if (element.state.length === 6) {
                                                     const hexVal = element.state.substring(2, 4);
                                                     const dezVal = parseInt(hexVal, 16);
-                                                    this.setState("state." + objName, { val: dezVal, ack: true });
+                                                    await this.setState(`state.${objName}`, {
+                                                        val: dezVal,
+                                                        ack: true,
+                                                    });
                                                 } else {
                                                     this.log.error(
-                                                        "state length not 6 element.state: " + element.state,
+                                                        `state length not 6 element.state: ${element.state}`,
                                                     );
-                                                    this.setState("state." + objName, { val: 0, ack: true });
+                                                    await this.setState(`state.${objName}`, {
+                                                        val: 0,
+                                                        ack: true,
+                                                    });
                                                 }
                                             } else if (element.type === "BK") {
                                                 const objName = element.type + element.adr;
                                                 if (element.adr.length != 6) {
-                                                    this.log.error("this BK element has not 6 chars: " + element.adr);
+                                                    this.log.error(`this BK element has not 6 chars: ${element.adr}`);
                                                 }
-                                                this.setObjectNotExists("state." + objName, {
+                                                await this.setObjectNotExists(`state.${objName}`, {
                                                     type: "state",
                                                     common: {
-                                                        name: "BK " + element.adr,
+                                                        name: `BK ${element.adr}`,
                                                         type: "string",
                                                         role: "text",
                                                         read: true,
@@ -253,10 +250,10 @@ class MediolaGateway extends utils.Adapter {
                                                     },
                                                     native: {},
                                                 });
-                                                this.setObjectNotExists("action." + objName, {
+                                                await this.setObjectNotExists(`action.${objName}`, {
                                                     type: "state",
                                                     common: {
-                                                        name: "BK " + element.adr + " 1=up, 2=down, 3=stop",
+                                                        name: `BK ${element.adr} 1=up, 2=down, 3=stop`,
                                                         type: "string",
                                                         role: "text",
                                                         read: true,
@@ -264,16 +261,19 @@ class MediolaGateway extends utils.Adapter {
                                                     },
                                                     native: {},
                                                 });
-                                                this.setState("state." + objName, { val: element.state, ack: true });
+                                                await this.setState(`state.${objName}`, {
+                                                    val: element.state,
+                                                    ack: true,
+                                                });
                                             } else if (element.type === "RT") {
                                                 const objName = element.type + element.adr;
                                                 if (element.adr.length != 6) {
-                                                    this.log.error("this RT element has not 6 chars: " + element.adr);
+                                                    this.log.error(`this RT element has not 6 chars: ${element.adr}`);
                                                 }
-                                                this.setObjectNotExists("state." + objName, {
+                                                await this.setObjectNotExists(`state.${objName}`, {
                                                     type: "state",
                                                     common: {
-                                                        name: "RT " + element.adr,
+                                                        name: `RT ${element.adr}`,
                                                         type: "string",
                                                         role: "text",
                                                         read: true,
@@ -281,10 +281,10 @@ class MediolaGateway extends utils.Adapter {
                                                     },
                                                     native: {},
                                                 });
-                                                this.setObjectNotExists("action." + objName, {
+                                                await this.setObjectNotExists(`action.${objName}`, {
                                                     type: "state",
                                                     common: {
-                                                        name: "RT " + element.adr + " 1=up, 2=down, 3=stop",
+                                                        name: `RT ${element.adr} 1=up, 2=down, 3=stop`,
                                                         type: "string",
                                                         role: "text",
                                                         read: true,
@@ -295,12 +295,12 @@ class MediolaGateway extends utils.Adapter {
                                             } else if (element.type === "ER") {
                                                 const objName = element.type + element.adr;
                                                 if (element.adr.length != 2) {
-                                                    this.log.error("this ER element has not 2 chars: " + element.adr);
+                                                    this.log.error(`this ER element has not 2 chars: ${element.adr}`);
                                                 }
-                                                this.setObjectNotExists("state." + objName, {
+                                                await this.setObjectNotExists(`state.${objName}`, {
                                                     type: "state",
                                                     common: {
-                                                        name: "ER " + element.adr,
+                                                        name: `ER ${element.adr}`,
                                                         type: "string",
                                                         role: "text",
                                                         read: true,
@@ -308,10 +308,10 @@ class MediolaGateway extends utils.Adapter {
                                                     },
                                                     native: {},
                                                 });
-                                                this.setObjectNotExists("action." + objName, {
+                                                await this.setObjectNotExists(`action.${objName}`, {
                                                     type: "state",
                                                     common: {
-                                                        name: "ER " + element.adr + " 1=up, 2=down, 3=stop",
+                                                        name: `ER ${element.adr} 1=up, 2=down, 3=stop`,
                                                         type: "string",
                                                         role: "text",
                                                         read: true,
@@ -319,16 +319,19 @@ class MediolaGateway extends utils.Adapter {
                                                     },
                                                     native: {},
                                                 });
-                                                this.setState("state." + objName, { val: element.state, ack: true });
+                                                await this.setState(`state.${objName}`, {
+                                                    val: element.state,
+                                                    ack: true,
+                                                });
                                             } else if (element.type === "DY2") {
                                                 const objName = element.type + element.adr;
                                                 if (element.adr.length != 8) {
-                                                    this.log.error("this DY2 element has not 8 chars: " + element.adr);
+                                                    this.log.error(`this DY2 element has not 8 chars: ${element.adr}`);
                                                 }
-                                                this.setObjectNotExists("state." + objName, {
+                                                await this.setObjectNotExists(`state.${objName}`, {
                                                     type: "state",
                                                     common: {
-                                                        name: "2DY " + element.adr,
+                                                        name: `2DY ${element.adr}`,
                                                         type: "string",
                                                         role: "text",
                                                         read: true,
@@ -336,11 +339,10 @@ class MediolaGateway extends utils.Adapter {
                                                     },
                                                     native: {},
                                                 });
-                                                this.setObjectNotExists("action." + objName, {
+                                                await this.setObjectNotExists(`action.${objName}`, {
                                                     type: "state",
                                                     common: {
-                                                        name:
-                                                            "2DY " + element.adr + " 1=up, 2=down, 3=stop 10,20,...,90",
+                                                        name: `2DY ${element.adr} 1=up, 2=down, 3=stop 10,20,...,90`,
                                                         type: "string",
                                                         role: "text",
                                                         read: true,
@@ -348,14 +350,17 @@ class MediolaGateway extends utils.Adapter {
                                                     },
                                                     native: {},
                                                 });
-                                                this.setState("state." + objName, { val: element.state, ack: true });
+                                                await this.setState(`state.${objName}`, {
+                                                    val: element.state,
+                                                    ack: true,
+                                                });
                                             } else if (element.type === "HM") {
                                                 if (JSON.stringify(element.state) != "{}") {
-                                                    const objName = "homematic." + element.adr;
+                                                    const objName = `homematic.${element.adr}`;
                                                     const hmState: HmState = JSON.parse(JSON.stringify(element.state));
                                                     if ("state" in hmState) {
                                                         this.log.debug(JSON.stringify(hmState.state));
-                                                        this.setObjectNotExists(objName, {
+                                                        await this.setObjectNotExists(objName, {
                                                             type: "state",
                                                             common: {
                                                                 name: "HM device with state",
@@ -366,14 +371,17 @@ class MediolaGateway extends utils.Adapter {
                                                             },
                                                             native: {},
                                                         });
-                                                        this.setState(objName, { val: hmState.state, ack: true });
+                                                        await this.setState(objName, {
+                                                            val: hmState.state,
+                                                            ack: true,
+                                                        });
                                                     }
                                                 }
                                             } else {
-                                                const objName = "sysvars.id" + element.adr;
-                                                const description = "sysvar" + element.adr;
+                                                const objName = `sysvars.id${element.adr}`;
+                                                const description = `sysvar${element.adr}`;
                                                 objState = element.state;
-                                                this.setObjectNotExists(objName, {
+                                                await this.setObjectNotExists(objName, {
                                                     type: "state",
                                                     common: {
                                                         name: description,
@@ -384,29 +392,32 @@ class MediolaGateway extends utils.Adapter {
                                                     },
                                                     native: {},
                                                 });
-                                                this.setState(objName, { val: objState, ack: true });
+                                                await this.setState(objName, {
+                                                    val: objState,
+                                                    ack: true,
+                                                });
                                             }
                                         } else {
                                             this.log.error(
-                                                "invalid sys var name from mediola device element.adr = " + element.adr,
+                                                `invalid sys var name from mediola device element.adr = ${element.adr}`,
                                             );
                                         }
                                     }
                                 }
                             } else {
-                                this.log.error("json format not known:" + JSON.stringify(jsonData));
+                                this.log.error(`json format not known:${JSON.stringify(jsonData)}`);
                             }
                         } catch (error) {
                             if (error instanceof Error) {
                                 this.log.error(error.message);
                             }
-                            this.log.error("json format invalid:" + JSON.stringify(jsonData));
+                            this.log.error(`json format invalid:${JSON.stringify(jsonData)}`);
                         }
                     } else {
-                        this.log.error("mediola device rejected the request: " + res.data.toString());
+                        this.log.error(`mediola device rejected the request: ${res.data.toString()}`);
                     }
                 })
-                .catch((error) => {
+                .catch(error => {
                     sysvarInit = false; // retry next time
                     if (error instanceof Error) {
                         this.log.error(error.message);
@@ -417,11 +428,11 @@ class MediolaGateway extends utils.Adapter {
             this.log.debug("recalled with no effect");
         }
     }
-    private async refreshStates(source: string): Promise<void> {
-        this.log.debug("Source: " + source);
+    private refreshStates(source: string): void {
+        this.log.debug(`Source: ${source}`);
         // stop timer
         if (pullDataTimer != null) {
-            this.log.debug("timer cleared by: " + source);
+            this.log.debug(`timer cleared by: ${source}`);
             this.clearTimeout(pullDataTimer);
         }
         if (this.config.pullData === true) {
@@ -506,37 +517,37 @@ class MediolaGateway extends utils.Adapter {
      */
     private async onReady(): Promise<void> {
         // Reset the connection indicator during startup
-        this.setState("info.connection", false, true);
-        this.extendObject("action", {
+        await this.setState("info.connection", false, true);
+        await this.extendObject("action", {
             type: "folder",
             common: {
                 name: "action",
             },
         });
-        this.extendObject("sysvars", {
+        await this.extendObject("sysvars", {
             type: "folder",
             common: {
                 name: "sysvars",
             },
         });
         // try to find the mediola gateway with the given config
-        this.log.info("auto detection: " + this.config.autoDetect);
+        this.log.info(`auto detection: ${this.config.autoDetect}`);
         if (this.config.autoDetect == false) {
-            this.log.info("find by mac: " + this.config.findByMac);
+            this.log.info(`find by mac: ${this.config.findByMac}`);
             if (this.config.findByMac == true) {
                 waitingForMacDevice = true;
                 foundMacAddress = this.config.mac;
-                this.log.info("with mac address: " + foundMacAddress);
+                this.log.info(`with mac address: ${foundMacAddress}`);
             } else {
-                this.log.info("find by ip: " + this.config.findByIp);
+                this.log.info(`find by ip: ${this.config.findByIp}`);
                 if (this.config.findByIp == true) {
                     waitingForIpDevice = false;
                     validMediolaFound = true;
                     foundIpAddress = this.config.ip;
                     this.readAllSystemVars(false);
                     this.refreshStates("onReady");
-                    this.setState("info.connection", true, true);
-                    this.log.info("with ip: " + foundIpAddress);
+                    await this.setState("info.connection", true, true);
+                    this.log.info(`with ip: ${foundIpAddress}`);
                 } else {
                     this.log.error("no valid detection method defined");
                 }
@@ -548,30 +559,33 @@ class MediolaGateway extends utils.Adapter {
             const address = inSocket.address();
             this.log.debug(`UDP socket listening on ${address.address}:${address.port}`);
         });
-        inSocket.on("message", (message, remote) => {
+        inSocket.on("message", async (message, remote) => {
             if (message.toString().startsWith("{XC_EVT}")) {
                 const eventData = message.toString().substring(8);
                 try {
                     const jsonData = JSON.parse(eventData);
                     if (isMediolaEvt(jsonData)) {
                         if (jsonData.type === "IR") {
-                            this.setState("receivedIrData", { val: jsonData.data, ack: true });
+                            await this.setState("receivedIrData", {
+                                val: jsonData.data,
+                                ack: true,
+                            });
                         } else if (jsonData.type === "SV") {
                             this.log.debug(JSON.stringify(jsonData));
                             const data = jsonData.data;
                             const index = data.substring(2, 4);
                             const value = data.substring(5);
                             if (data.startsWith("I:")) {
-                                this.setState("id" + index, { val: value, ack: true });
+                                await this.setState(`id${index}`, { val: value, ack: true });
                             } else if (data.startsWith("B:")) {
-                                this.setState("id" + index, { val: value, ack: true });
+                                await this.setState(`id${index}`, { val: value, ack: true });
                             } else if (data.startsWith("S:")) {
-                                this.setState("id" + index, { val: value, ack: true });
+                                await this.setState(`id${index}`, { val: value, ack: true });
                             } else if (data.startsWith("F:")) {
                                 // never reached yet, because invalid json chars in floats
-                                this.setState("id" + index, { val: value, ack: true });
+                                await this.setState(`id${index}`, { val: value, ack: true });
                             } else {
-                                this.log.debug("sys var type not known: " + jsonData.data);
+                                this.log.debug(`sys var type not known: ${jsonData.data}`);
                             }
                         } else if (jsonData.type === "WR") {
                             // not yet seen, but should be intresting when received
@@ -598,28 +612,30 @@ class MediolaGateway extends utils.Adapter {
                             // ignor HM data
                             this.log.debug(JSON.stringify(jsonData));
                         } else {
-                            this.log.debug("data type not known: " + jsonData.type);
+                            this.log.debug(`data type not known: ${jsonData.type}`);
                             this.log.debug(JSON.stringify(jsonData));
                         }
                     } else {
-                        this.log.error("json format not known:" + message);
+                        this.log.error(`json format not known:${message.toString()}`);
                     }
                 } catch (error) {
                     if (error instanceof Error) {
                         this.log.error(error.message);
                     }
-                    this.log.error("json format invalid:" + message);
+                    this.log.error(`json format invalid:${message.toString()}`);
                 }
             } else {
-                this.log.debug(`in RECEIVED unknow message: ${remote.address}:${remote.port}-${message}|end`);
+                this.log.debug(
+                    `in RECEIVED unknow message: ${remote.address}:${remote.port}-${message.toString()}|end`,
+                );
             }
         });
         inSocket.bind(1902);
         outSocket.bind(() => {
             outSocket.setBroadcast(true);
-            outSocket.on("message", (message, remote) => {
+            outSocket.on("message", async (message, remote) => {
                 let errorName = "No line with NAME: found.";
-                this.log.debug(`out RECEIVED: ${remote.address}:${remote.port} - ${message}|end`);
+                this.log.debug(`out RECEIVED: ${remote.address}:${remote.port} - ${message.toString()}|end`);
                 const dataLines = String(message).split("\n");
                 let ipAddress = "";
                 let macAddress = "";
@@ -650,7 +666,7 @@ class MediolaGateway extends utils.Adapter {
                         mediolaFound = true;
                     }
                     if (dataLine.startsWith("NAME:")) {
-                        errorName = "unknown name line: " + dataLine;
+                        errorName = `unknown name line: ${dataLine}`;
                     }
                 }
                 if (mediolaFound) {
@@ -658,7 +674,7 @@ class MediolaGateway extends utils.Adapter {
                         waitingForAnyDevice = false;
                         foundMacAddress = macAddress;
                         foundIpAddress = ipAddress;
-                        this.setState("info.connection", true, true);
+                        await this.setState("info.connection", true, true);
                         this.log.info(`Mediola connected with ip:${ipAddress} and mac:${macAddress}`);
                         validMediolaFound = true;
                     }
@@ -666,7 +682,7 @@ class MediolaGateway extends utils.Adapter {
                         if (foundMacAddress === macAddress) {
                             waitingForMacDevice = false;
                             foundIpAddress = ipAddress;
-                            this.setState("info.connection", true, true);
+                            await this.setState("info.connection", true, true);
                             this.log.info(`Mediola connected with ip:${ipAddress} and mac:${macAddress}`);
                             validMediolaFound = true;
                         }
@@ -675,7 +691,7 @@ class MediolaGateway extends utils.Adapter {
                         if (foundIpAddress === ipAddress) {
                             waitingForIpDevice = false;
                             foundMacAddress = macAddress;
-                            this.setState("info.connection", true, true);
+                            await this.setState("info.connection", true, true);
                             this.log.info(`Mediola connected with ip:${ipAddress} and mac:${macAddress}`);
                             validMediolaFound = true;
                         }
@@ -690,8 +706,8 @@ class MediolaGateway extends utils.Adapter {
                 }
             });
         });
-        outSocket.send("GET\n", 1901, "255.255.255.255", (err) => {
-            console.log("err send: " + err);
+        outSocket.send("GET\n", 1901, "255.255.255.255", err => {
+            console.log(`err send: ${err}`);
         });
         // setup the connectors
         await this.setObjectNotExistsAsync("receivedIrData", {
@@ -742,6 +758,8 @@ class MediolaGateway extends utils.Adapter {
 
     /**
      * Is called when adapter shuts down - callback has to be called under any circumstances!
+     *
+     * @param callback tunnel for onload
      */
     private onUnload(callback: () => void): void {
         try {
@@ -758,6 +776,9 @@ class MediolaGateway extends utils.Adapter {
 
     /**
      * Is called if a subscribed state changes
+     *
+     * @param id object with state change
+     * @param state new state
      */
     private onStateChange(id: string, state: ioBroker.State | null | undefined): void {
         if (state) {
@@ -778,29 +799,29 @@ class MediolaGateway extends utils.Adapter {
                         subfolder = dataNameParts[2];
                         dataName = dataNameParts[3];
                         for (let index = 4; index < dataNameParts.length; index++) {
-                            dataName = dataName + "." + dataNameParts[index];
+                            dataName = `${dataName}.${dataNameParts[index]}`;
                         }
                     }
                 } else {
-                    this.log.debug("len: " + dataNameParts.length);
+                    this.log.debug(`len: ${dataNameParts.length}`);
                     for (let index = 0; index < dataNameParts.length; index++) {
-                        this.log.debug(index.toString() + " = " + dataNameParts[index]);
+                        this.log.debug(`${index.toString()} = ${dataNameParts[index]}`);
                     }
                 }
                 if (dataName === "sendIrData") {
-                    this.log.debug("try send: " + state.val);
+                    this.log.debug(`try send: ${state.val}`);
                     if (validMediolaFound) {
-                        let reqUrl = this.genURL() + "XC_FNC=Send2&code=" + state.val;
+                        let reqUrl = `${this.genURL()}XC_FNC=Send2&code=${state.val}`;
                         reqUrl = encodeURI(reqUrl);
                         axios
                             .get(reqUrl)
-                            .then((res) => {
+                            .then(res => {
                                 this.log.debug(res.data);
                                 if (this.testResponse(res) === false) {
                                     this.log.error("sendIrData failed");
                                 }
                             })
-                            .catch((error) => {
+                            .catch(error => {
                                 this.log.error("mediola device not reached by sending IR data");
                                 if (error instanceof Error) {
                                     this.log.error(error.message);
@@ -808,19 +829,19 @@ class MediolaGateway extends utils.Adapter {
                             });
                     }
                 } else if (dataName === "sendRfData") {
-                    this.log.debug("try send: " + state.val);
+                    this.log.debug(`try send: ${state.val}`);
                     if (validMediolaFound) {
-                        let reqUrl = this.genURL() + "XC_FNC=Send2&ir=00&rf=01&code=" + state.val;
+                        let reqUrl = `${this.genURL()}XC_FNC=Send2&ir=00&rf=01&code=${state.val}`;
                         reqUrl = encodeURI(reqUrl);
                         axios
                             .get(reqUrl)
-                            .then((res) => {
+                            .then(res => {
                                 this.log.debug(res.data);
                                 if (this.testResponse(res) === false) {
                                     this.log.error("sendRfData failed.");
                                 }
                             })
-                            .catch((error) => {
+                            .catch(error => {
                                 this.log.error("mediola device not reached by sending rf data");
                                 if (error instanceof Error) {
                                     this.log.error(error.message);
@@ -829,9 +850,9 @@ class MediolaGateway extends utils.Adapter {
                     }
                 } else if (dataName.startsWith("id")) {
                     if (subfolder === "sysvars") {
-                        this.log.debug("got known event in sysvars: " + id + " " + JSON.stringify(state));
+                        this.log.debug(`got known event in sysvars: ${id} ${JSON.stringify(state)}`);
                     }
-                    this.log.debug("got known event in root: " + id + " " + JSON.stringify(state));
+                    this.log.debug(`got known event in root: ${id} ${JSON.stringify(state)}`);
                 } else if (dataName.startsWith("WR")) {
                     if (subfolder === "action") {
                         const wrId = dataName.replace("WR", "");
@@ -861,17 +882,17 @@ class MediolaGateway extends utils.Adapter {
                             );
                         }
                         if (validMediolaFound) {
-                            let reqUrl = this.genURL() + "XC_FNC=SendSC&type=WR&data=01" + wrId + cmdType + direction;
+                            let reqUrl = `${this.genURL()}XC_FNC=SendSC&type=WR&data=01${wrId}${cmdType}${direction}`;
                             reqUrl = encodeURI(reqUrl);
                             axios
                                 .get(reqUrl)
-                                .then((res) => {
+                                .then(res => {
                                     this.log.debug(res.data);
                                     if (this.testResponse(res) === false) {
                                         this.log.error("WR data send failed");
                                     }
                                 })
-                                .catch((error) => {
+                                .catch(error => {
                                     this.log.error("mediola device not reached by sending SC data to WR");
                                     if (error instanceof Error) {
                                         this.log.error(error.message);
@@ -879,7 +900,7 @@ class MediolaGateway extends utils.Adapter {
                                 });
                         }
                     } else {
-                        this.log.debug("Wrong subfolder: " + subfolder + "from device: " + dataName);
+                        this.log.debug(`Wrong subfolder: ${subfolder}from device: ${dataName}`);
                     }
                 } else if (dataName.startsWith("BK")) {
                     if (subfolder === "action") {
@@ -895,17 +916,17 @@ class MediolaGateway extends utils.Adapter {
                             this.log.error("only 1 (up), 2 (down) or 3 (stop) is allowed. For safety do a stop");
                         }
                         if (validMediolaFound) {
-                            let reqUrl = this.genURL() + "XC_FNC=SendSC&type=BK&data=0101" + actorId + direction;
+                            let reqUrl = `${this.genURL()}XC_FNC=SendSC&type=BK&data=0101${actorId}${direction}`;
                             reqUrl = encodeURI(reqUrl);
                             axios
                                 .get(reqUrl)
-                                .then((res) => {
+                                .then(res => {
                                     this.log.debug(res.data);
                                     if (this.testResponse(res) === false) {
                                         this.log.error("BK data send failed");
                                     }
                                 })
-                                .catch((error) => {
+                                .catch(error => {
                                     this.log.error("mediola device not reached by sending SC data to BK");
                                     if (error instanceof Error) {
                                         this.log.error(error.message);
@@ -913,7 +934,7 @@ class MediolaGateway extends utils.Adapter {
                                 });
                         }
                     } else {
-                        this.log.debug("Wrong subfolder: " + subfolder + "from device: " + dataName);
+                        this.log.debug(`Wrong subfolder: ${subfolder}from device: ${dataName}`);
                     }
                 } else if (dataName.startsWith("RT")) {
                     if (subfolder === "action") {
@@ -929,17 +950,17 @@ class MediolaGateway extends utils.Adapter {
                             this.log.error("only 1 (up), 2 (down) or 3 (stop) is allowed. For safety do a stop");
                         }
                         if (validMediolaFound) {
-                            let reqUrl = this.genURL() + "XC_FNC=SendSC&type=RT&data=" + direction + actorId;
+                            let reqUrl = `${this.genURL()}XC_FNC=SendSC&type=RT&data=${direction}${actorId}`;
                             reqUrl = encodeURI(reqUrl);
                             axios
                                 .get(reqUrl)
-                                .then((res) => {
+                                .then(res => {
                                     this.log.debug(res.data);
                                     if (this.testResponse(res) === false) {
                                         this.log.error("RT data send failed");
                                     }
                                 })
-                                .catch((error) => {
+                                .catch(error => {
                                     this.log.error("mediola device not reached by sending SC data to RT");
                                     if (error instanceof Error) {
                                         this.log.error(error.message);
@@ -947,7 +968,7 @@ class MediolaGateway extends utils.Adapter {
                                 });
                         }
                     } else {
-                        this.log.debug("Wrong subfolder: " + subfolder + "from device: " + dataName);
+                        this.log.debug(`Wrong subfolder: ${subfolder}from device: ${dataName}`);
                     }
                 } else if (dataName.startsWith("NY")) {
                     if (subfolder === "action") {
@@ -968,17 +989,17 @@ class MediolaGateway extends utils.Adapter {
                                 );
                             }
                             if (validMediolaFound) {
-                                let reqUrl = this.genURL() + "XC_FNC=SendSC&type=NY&data=" + actorId + direction;
+                                let reqUrl = `${this.genURL()}XC_FNC=SendSC&type=NY&data=${actorId}${direction}`;
                                 reqUrl = encodeURI(reqUrl);
                                 axios
                                     .get(reqUrl)
-                                    .then((res) => {
+                                    .then(res => {
                                         this.log.debug(res.data);
                                         if (this.testResponse(res) === false) {
                                             this.log.error("NY data send failed");
                                         }
                                     })
-                                    .catch((error) => {
+                                    .catch(error => {
                                         this.log.error("mediola device not reached by sending SC data to NY");
                                         if (error instanceof Error) {
                                             this.log.error(error.message);
@@ -989,7 +1010,7 @@ class MediolaGateway extends utils.Adapter {
                             this.log.error("NY id is not 8 chars long.");
                         }
                     } else {
-                        this.log.debug("Wrong subfolder: " + subfolder + "from device: " + dataName);
+                        this.log.debug(`Wrong subfolder: ${subfolder}from device: ${dataName}`);
                     }
                 } else if (dataName.startsWith("DY")) {
                     if (subfolder === "action") {
@@ -1006,17 +1027,17 @@ class MediolaGateway extends utils.Adapter {
                                 this.log.error("only 1 (up), 2 (down) or 3 (stop) is allowed. For safety do a stop");
                             }
                             if (validMediolaFound) {
-                                let reqUrl = this.genURL() + "XC_FNC=SendSC&type=DY&data=" + actorId + direction;
+                                let reqUrl = `${this.genURL()}XC_FNC=SendSC&type=DY&data=${actorId}${direction}`;
                                 reqUrl = encodeURI(reqUrl);
                                 axios
                                     .get(reqUrl)
-                                    .then((res) => {
+                                    .then(res => {
                                         this.log.debug(res.data);
                                         if (this.testResponse(res) === false) {
                                             this.log.error("DY data send failed");
                                         }
                                     })
-                                    .catch((error) => {
+                                    .catch(error => {
                                         this.log.error("mediola device not reached by sending SC data to DY");
                                         if (error instanceof Error) {
                                             this.log.error(error.message);
@@ -1027,7 +1048,7 @@ class MediolaGateway extends utils.Adapter {
                             this.log.error("DY id is not 8 chars long.");
                         }
                     } else {
-                        this.log.debug("Wrong subfolder: " + subfolder + "from device: " + dataName);
+                        this.log.debug(`Wrong subfolder: ${subfolder}from device: ${dataName}`);
                     }
                 } else if (dataName.startsWith("2DY")) {
                     if (subfolder === "action") {
@@ -1060,19 +1081,18 @@ class MediolaGateway extends utils.Adapter {
                                 );
                             }
                             if (validMediolaFound) {
-                                let reqUrl =
-                                    this.genURL() + "XC_FNC=SendSC&type=DY2&data=01" + actorId + cmdType + direction;
+                                let reqUrl = `${this.genURL()}XC_FNC=SendSC&type=DY2&data=01${actorId}${cmdType}${direction}`;
                                 reqUrl = encodeURI(reqUrl);
                                 this.log.debug(reqUrl);
                                 axios
                                     .get(reqUrl)
-                                    .then((res) => {
+                                    .then(res => {
                                         this.log.debug(res.data);
                                         if (this.testResponse(res) === false) {
                                             this.log.error("DY data send failed");
                                         }
                                     })
-                                    .catch((error) => {
+                                    .catch(error => {
                                         this.log.error("mediola device not reached by sending SC data to DY2");
                                         if (error instanceof Error) {
                                             this.log.error(error.message);
@@ -1083,7 +1103,7 @@ class MediolaGateway extends utils.Adapter {
                             this.log.error("DY2 id is not 8 chars long.");
                         }
                     } else {
-                        this.log.debug("Wrong subfolder: " + subfolder + "from device: " + dataName);
+                        this.log.debug(`Wrong subfolder: ${subfolder}from device: ${dataName}`);
                     }
                 } else if (dataName.startsWith("ER")) {
                     if (subfolder === "action") {
@@ -1100,18 +1120,18 @@ class MediolaGateway extends utils.Adapter {
                                 this.log.error("only 1 (up), 2 (down) or 3 (stop) is allowed. For safety do a stop");
                             }
                             if (validMediolaFound) {
-                                let reqUrl = this.genURL() + "XC_FNC=SendSC&type=ER&data=" + actorId + direction;
+                                let reqUrl = `${this.genURL()}XC_FNC=SendSC&type=ER&data=${actorId}${direction}`;
                                 reqUrl = encodeURI(reqUrl);
                                 axios
                                     .get(reqUrl)
-                                    .then((res) => {
+                                    .then(res => {
                                         this.log.debug(res.data);
                                         this.log.debug(reqUrl);
                                         if (this.testResponse(res) === false) {
                                             this.log.error("ER data send failed");
                                         }
                                     })
-                                    .catch((error) => {
+                                    .catch(error => {
                                         this.log.error("mediola device not reached by sending SC data to ER");
                                         if (error instanceof Error) {
                                             this.log.error(error.message);
@@ -1122,16 +1142,16 @@ class MediolaGateway extends utils.Adapter {
                             this.log.error("ER id is not 2 chars long.");
                         }
                     } else {
-                        this.log.debug("Wrong subfolder: " + subfolder + "from device: " + dataName);
+                        this.log.debug(`Wrong subfolder: ${subfolder}from device: ${dataName}`);
                     }
                 } else if (subfolder === "homematic") {
-                    this.log.debug("got hm event: " + JSON.stringify(state));
+                    this.log.debug(`got hm event: ${JSON.stringify(state)}`);
                     if (validMediolaFound) {
-                        let reqUrl = this.genURL() + "XC_FNC=SendSC&type=HM&address=" + dataName + "&data=" + state.val;
+                        let reqUrl = `${this.genURL()}XC_FNC=SendSC&type=HM&address=${dataName}&data=${state.val}`;
                         reqUrl = encodeURI(reqUrl);
                         axios
                             .get(reqUrl)
-                            .then((res) => {
+                            .then(res => {
                                 this.log.debug(res.data);
                                 this.log.debug(JSON.stringify(res.data));
                                 this.log.debug(reqUrl);
@@ -1139,7 +1159,7 @@ class MediolaGateway extends utils.Adapter {
                                     this.log.error("homematic data send failed");
                                 }
                             })
-                            .catch((error) => {
+                            .catch(error => {
                                 this.log.error("mediola device not reached by sending HM data");
                                 if (error instanceof Error) {
                                     this.log.error(error.message);
@@ -1147,8 +1167,8 @@ class MediolaGateway extends utils.Adapter {
                             });
                     }
                 } else {
-                    this.log.debug("got unknown event: " + JSON.stringify(state));
-                    this.log.debug("got unknown name: " + dataName);
+                    this.log.debug(`got unknown event: ${JSON.stringify(state)}`);
+                    this.log.debug(`got unknown name: ${dataName}`);
                 }
             }
         } else {
