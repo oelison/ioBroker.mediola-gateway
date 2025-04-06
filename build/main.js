@@ -866,14 +866,18 @@ class MediolaGateway extends utils.Adapter {
           if (subfolder === "action") {
             const actorId = dataName.replace("BK", "");
             let direction = "02";
-            if (state.val === "1") {
-              direction = "00";
-            } else if (state.val === "2") {
-              direction = "01";
-            } else if (state.val == "3") {
-              direction = "02";
-            } else {
-              this.log.error("only 1 (up), 2 (down) or 3 (stop) is allowed. For safety do a stop");
+            if (state.val !== null) {
+              if (state.val === "1") {
+                direction = "00";
+              } else if (state.val === "2") {
+                direction = "01";
+              } else if (state.val === "3") {
+                direction = "02";
+              } else if (typeof state.val === "string" && state.val.length == 2) {
+                direction = state.val;
+              } else {
+                this.log.error("only 1 (up), 2 (down) or 3 (stop) is allowed. For safety do a stop");
+              }
             }
             if (validMediolaFound) {
               let reqUrl = `${this.genURL()}XC_FNC=SendSC&type=BK&data=0101${actorId}${direction}`;
@@ -889,6 +893,8 @@ class MediolaGateway extends utils.Adapter {
                   this.log.error(error.message);
                 }
               });
+            } else {
+              this.log.debug("mediola device not reachable");
             }
           } else {
             this.log.debug(`Wrong subfolder: ${subfolder}from device: ${dataName}`);
