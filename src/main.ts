@@ -253,7 +253,7 @@ class MediolaGateway extends utils.Adapter {
                                                 await this.setObjectNotExists(`action.${objName}`, {
                                                     type: "state",
                                                     common: {
-                                                        name: `BK ${element.adr} 1=up, 2=down, 3=stop`,
+                                                        name: `BK ${element.adr} 1=up, 2=down, 3=stop, xx=own number`,
                                                         type: "string",
                                                         role: "text",
                                                         read: true,
@@ -261,6 +261,34 @@ class MediolaGateway extends utils.Adapter {
                                                     },
                                                     native: {},
                                                 });
+                                                if (this.config.bksubdevices > 1) {
+                                                    for (let index = 2; index < this.config.bksubdevices + 1; index++) {
+                                                        const subDevice = index.toString().padStart(2, "0");
+                                                        const objName = element.type + subDevice + element.adr;
+                                                        await this.setObjectNotExists(`state.${objName}`, {
+                                                            type: "state",
+                                                            common: {
+                                                                name: `BK ${subDevice}${element.adr}`,
+                                                                type: "string",
+                                                                role: "text",
+                                                                read: true,
+                                                                write: false,
+                                                            },
+                                                            native: {},
+                                                        });
+                                                        await this.setObjectNotExists(`action.${objName}`, {
+                                                            type: "state",
+                                                            common: {
+                                                                name: `BK ${subDevice}${element.adr} 1=up, 2=down, 3=stop, xx=own number`,
+                                                                type: "string",
+                                                                role: "text",
+                                                                read: true,
+                                                                write: true,
+                                                            },
+                                                            native: {},
+                                                        });
+                                                    }
+                                                }
                                                 await this.setState(`state.${objName}`, {
                                                     val: element.state,
                                                     ack: true,
@@ -904,7 +932,13 @@ class MediolaGateway extends utils.Adapter {
                     }
                 } else if (dataName.startsWith("BK")) {
                     if (subfolder === "action") {
-                        const actorId = dataName.replace("BK", "");
+                        let actorId = dataName.replace("BK", "");
+                        let deviceSubId = "01";
+                        if (actorId.length === 8) {
+                            deviceSubId = actorId.substring(0, 2);
+                            actorId = actorId.substring(2);
+                        }
+                        this.log.debug(`BK deviceSubId: ${deviceSubId} actorId: ${actorId}`);
                         let direction = "02"; // stop as default
                         if (state.val !== null) {
                             if (state.val === "1") {
@@ -920,7 +954,7 @@ class MediolaGateway extends utils.Adapter {
                             }
                         }
                         if (validMediolaFound) {
-                            let reqUrl = `${this.genURL()}XC_FNC=SendSC&type=BK&data=0101${actorId}${direction}`;
+                            let reqUrl = `${this.genURL()}XC_FNC=SendSC&type=BK&data=01${deviceSubId}${actorId}${direction}`;
                             reqUrl = encodeURI(reqUrl);
                             axios
                                 .get(reqUrl)

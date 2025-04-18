@@ -15,6 +15,7 @@ declare global {
             pullData: boolean;
             pullDataInterval: number;
             mediolaV5orHigher: boolean;
+            bksubdevices: number;
         }
     }
 }

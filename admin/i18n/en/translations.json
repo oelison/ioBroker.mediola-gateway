@@ -22,5 +22,7 @@
     "pullDataInterval": "timespan for pull in minutes",
     "helpPullDataInterval": "How often the request to the mediola is generated.",
     "mediolaV5orHigher": "try to use the cmd and not command.",
-    "helpMediolaV5orHigher": "looks like, that mediola V5 have also a cmd usage. The API is not metion this."
+    "helpMediolaV5orHigher": "looks like, that mediola V5 have also a cmd usage. The API is not metion this.",
+    "bkNumberOfSubDevices": "Number of subdevices",
+    "helpBkNumberOfSubDevices": "Number of subdevices. If you have more than one device, you must set the number of subdevices."
 }
