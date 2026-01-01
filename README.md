@@ -120,7 +120,7 @@ DISCLAIMER All product and company names or logos are Trademarks™ or Registere
 
 MIT License
 
-Copyright (c) 2025 oelison <iobrokermediola@sciphy.de> (bots could use the mail, humans add a "2" before the @)
+Copyright (c) 2025-2026 oelison <iobrokermediola@sciphy.de> (bots could use the mail, humans add a "2" before the @)
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
