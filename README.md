@@ -59,6 +59,7 @@ DISCLAIMER All product and company names or logos are Trademarks™ or Registere
     ### **WORK IN PROGRESS**
 -->
 ### **WORK IN PROGRESS**
+- (copilot) Adapter requires node.js >= 22 now
 
 -   BK with self qualified direction (2 digits)
 -   updates from deps
