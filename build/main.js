@@ -23,7 +23,7 @@ var __toESM = (mod, isNodeMode, target) => (target = mod != null ? __create(__ge
 ));
 var utils = __toESM(require("@iobroker/adapter-core"));
 var import_axios = __toESM(require("axios"));
-var dgram = __toESM(require("dgram"));
+var dgram = __toESM(require("node:dgram"));
 const inSocket = dgram.createSocket("udp4");
 const outSocket = dgram.createSocket("udp4");
 let waitingForAnyDevice = false;

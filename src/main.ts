@@ -4,7 +4,7 @@
 
 import * as utils from "@iobroker/adapter-core";
 import axios from "axios";
-import * as dgram from "dgram";
+import * as dgram from "node:dgram";
 const inSocket = dgram.createSocket("udp4");
 const outSocket = dgram.createSocket("udp4");
 let waitingForAnyDevice = false;
@@ -33,9 +33,6 @@ type HmState = { lowbat: boolean; state: string };
 function isMediolaSysVarArray(o: any): o is MediolaSysVarArray {
     return true;
 }
-
-// Load your modules here, e.g.:
-// import * as fs from "fs";
 
 class MediolaGateway extends utils.Adapter {
     public constructor(options: Partial<utils.AdapterOptions> = {}) {
