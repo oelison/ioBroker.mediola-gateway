@@ -64,6 +64,8 @@ DISCLAIMER All product and company names or logos are Trademarks™ or Registere
 -   updates from deps
 -   bumps
 -   node 22 or higher is needed now
+-   js-controller >= 6.0.11
+-   admin >= 7.6.20
 
 ### 1.2.0 (2025-02-15)
 
