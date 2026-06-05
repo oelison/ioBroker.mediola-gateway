@@ -58,7 +58,7 @@ DISCLAIMER All product and company names or logos are Trademarks™ or Registere
     Placeholder for the next version (at the beginning of the line):
     ### **WORK IN PROGRESS**
 -->
-### **WORK IN PROGRESS**
+### 1.3.0 (2026-06-05)
 
 -   BK with self qualified direction (2 digits)
 -   updates from deps

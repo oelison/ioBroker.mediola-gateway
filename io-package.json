@@ -1,8 +1,21 @@
 {
   "common": {
     "name": "mediola-gateway",
-    "version": "1.2.0",
+    "version": "1.3.0",
     "news": {
+      "1.3.0": {
+        "en": "BK with self qualified direction (2 digits)\nupdates from deps\nbumps\nnode 22 or higher is needed now\njs-controller >= 6.0.11\nadmin >= 7.6.20",
+        "de": "BK mit selbstqualifizierter Richtung (2 Ziffern)\naktualisierungen von deps\nstöße\nknoten 22 oder höher benötigt\njs-controller >= 6.0.11\nverwaltung >= 7.6.20",
+        "ru": "БК с самоквалифицированным направлением (2 цифры)\nобновления от deps\nудары\nузел 22 или выше нужен сейчас\njs-контроллер >= 6.0.11\nадминистрирование >= 7.6.20",
+        "pt": "BK com direção auto-qualificada (2 dígitos)\nactualizações do deps\ncolisões\nnó 22 ou superior é necessário agora\njs-controlador >= 6.0.11\nadmin >= 7.6.20",
+        "nl": "BK met zelfgekwalificeerde richting (2 cijfers)\nupdates van deps\nbumps\nnode 22 of hoger is nu nodig\nmet een vermogen van <= 750 kva\nadministrator",
+        "fr": "BK avec direction autoqualifiée (2 chiffres)\nmises à jour des deps\nbosses\nnode 22 ou plus est nécessaire maintenant\njs-contrôleur >= 6.0.11\nadministrateur >= 7.6.20",
+        "it": "BK con direzione autonoma (2 cifre)\naggiornamenti da deps\nurti\nnodo 22 o superiore è necessario ora\njs-controller >= 6.0.11\n>= 7.6.20",
+        "es": "BK con dirección autocalificada (2 dígitos)\nactualizaciones de los deps\ngolpes\nnodo 22 o superior se necesita ahora\njs-controller\nadmin = 7.6.20",
+        "pl": "BK z własnym kierunkiem (2 cyfry)\naktualizacje z deps\nguzy\nwęzeł 22 lub wyższy jest teraz potrzebny\nss- controller > = 6.0.11\nadmin > = 7.6.20",
+        "uk": "BK з власним кваліфікованим напрямком (2 цифри)\nоновлення з deps\nбампери\nвузол 22 або вище потрібно зараз\njs-controller >=6.0.11\nадмін >= 7.6.20",
+        "zh-cn": "BK 自定方向(2位数)\n从道具中更新\n凸起\n现在需要22号或以上的节点\njs控制器 >= 6.0.11\n行政主管"
+      },
       "1.2.0": {
         "en": "Node 16 removed\nsome updates of libs\nDY2 as 2DY added (Thanks to JEnsR)",
         "de": "Node 16 entfernt\neinige updates von libs\nDY2 als 2DY hinzugefügt (Danke an JEnsR)",
